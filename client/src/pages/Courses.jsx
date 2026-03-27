@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
-import { BookOpen, Clock, IndianRupee } from "lucide-react";
+import { BookOpen, Clock, IndianRupee, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
 const containerVariants = {
@@ -8,13 +8,13 @@ const containerVariants = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
+      staggerChildren: 0.15
     }
   }
 };
 
 const cardVariants = {
-  hidden: { opacity: 0, scale: 0.95, y: 10 },
+  hidden: { opacity: 0, scale: 0.95, y: 20 },
   show: { opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
 };
 
@@ -35,25 +35,27 @@ function Courses() {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-8">
       
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2 tracking-tight">
-          <BookOpen className="text-indigo-500" />
+        <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500 flex items-center gap-3 tracking-tight">
+          <BookOpen className="text-orange-500" size={36} />
           Offered Courses
         </h1>
-        <p className="text-gray-500 mt-1">Manage and view all the academic courses currently available.</p>
+        <p className="text-slate-500 mt-2 text-lg">Manage and view all the academic courses currently available.</p>
       </div>
 
       {loading ? (
-        <div className="text-gray-400 py-8">Loading courses details...</div>
+        <div className="flex justify-center items-center py-20 text-slate-500 font-medium text-lg gap-3">
+          <Sparkles className="animate-spin text-orange-400" /> Loading course details...
+        </div>
       ) : courses.length === 0 ? (
-        <div className="bg-white p-8 rounded-2xl border border-gray-100 text-center text-gray-500 shadow-sm">
-          No courses found.
+        <div className="glass p-12 rounded-[2rem] text-center text-slate-500 text-lg font-medium shadow-sm">
+          No courses found. Create one to get started.
         </div>
       ) : (
         <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           variants={containerVariants}
           initial="hidden"
           animate="show"
@@ -62,40 +64,49 @@ function Courses() {
             <motion.div 
               key={c._id} 
               variants={cardVariants}
-              whileHover={{ y: -5, transition: { duration: 0.2 } }}
-              className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all duration-300 group overflow-hidden relative cursor-pointer"
+              whileHover={{ y: -10, transition: { duration: 0.3 } }}
+              className="glass border-0 bg-white/70 rounded-[2rem] p-8 shadow-xl shadow-slate-200/50 hover:shadow-orange-500/20 transition-all duration-300 group overflow-hidden relative cursor-pointer"
             >
-              {/* Decorative top border */}
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
+              {/* Decorative Background Elements */}
+              <div className="absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br from-orange-400/20 to-pink-500/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 z-0"></div>
               
-              <h2 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-indigo-600 transition-colors">
-                {c.name}
-              </h2>
-              
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 text-gray-600">
-                  <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-orange-500">
-                    <Clock size={16} />
-                  </div>
-                  <span className="font-medium text-sm">Duration:</span>
-                  <span className="text-sm">{c.duration}</span>
+              <div className="relative z-10">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-orange-500/30 mb-6 group-hover:rotate-12 transition-transform duration-500">
+                  <BookOpen size={28} />
                 </div>
                 
-                <div className="flex items-center gap-3 text-gray-600">
-                  <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500">
-                    <IndianRupee size={16} />
+                <h2 className="text-2xl font-black text-slate-800 mb-6 group-hover:text-orange-600 transition-colors tracking-tight">
+                  {c.name}
+                </h2>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 text-slate-600 bg-white/50 p-3 rounded-xl">
+                    <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-orange-100 group-hover:text-orange-500 transition-colors">
+                      <Clock size={20} />
+                    </div>
+                    <div>
+                      <span className="block text-xs font-bold text-slate-400 uppercase tracking-widest">Duration</span>
+                      <span className="font-bold text-slate-700">{c.duration}</span>
+                    </div>
                   </div>
-                  <span className="font-medium text-sm">Fee Structure:</span>
-                  <span className="text-sm font-semibold text-gray-900">₹{c.fee}</span>
+                  
+                  <div className="flex items-center gap-4 text-slate-600 bg-white/50 p-3 rounded-xl">
+                    <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-emerald-100 group-hover:text-emerald-500 transition-colors">
+                      <IndianRupee size={20} />
+                    </div>
+                    <div>
+                      <span className="block text-xs font-bold text-slate-400 uppercase tracking-widest">Fee Structure</span>
+                      <span className="font-black text-slate-800 text-lg">₹{c.fee}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-8 flex justify-end">
+                  <button className="px-6 py-2.5 rounded-xl text-sm font-bold bg-slate-100 text-slate-600 group-hover:bg-gradient-to-r group-hover:from-orange-500 group-hover:to-pink-500 group-hover:text-white transition-all duration-300 shadow-sm group-hover:shadow-orange-500/30 flex items-center gap-2">
+                    View Specs <span className="text-lg leading-none">&rarr;</span>
+                  </button>
                 </div>
               </div>
-
-              <div className="mt-6 pt-4 border-t border-gray-100 flex justify-end">
-                <button className="text-sm font-medium text-indigo-600 hover:text-indigo-700 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  View Details &rarr;
-                </button>
-              </div>
-
             </motion.div>
           ))}
         </motion.div>

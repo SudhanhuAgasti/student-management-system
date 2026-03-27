@@ -1,14 +1,17 @@
 import { Link, useLocation } from "react-router-dom";
-import { 
-  LayoutDashboard, 
-  Users, 
-  UserPlus, 
-  CalendarCheck, 
-  BookOpen, 
+import { useState, useEffect } from "react";
+import {
+  LayoutDashboard,
+  Users,
+  UserPlus,
+  CalendarCheck,
+  BookOpen,
   CreditCard,
-  LogOut
+  LogOut,
+  Moon,
+  Sun
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -27,32 +30,57 @@ const linkVariants = {
 
 function Sidebar({ onCloseMobile }) {
   const location = useLocation();
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem("theme") === "dark" || 
+      (!localStorage.getItem("theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDarkMode]);
 
   const navLinks = [
-    { name: "Dashboard", path: "/", icon: <LayoutDashboard size={20} /> },
-    { name: "Students", path: "/students", icon: <Users size={20} /> },
-    { name: "Add Student", path: "/addStudent", icon: <UserPlus size={20} /> },
-    { name: "Attendance", path: "/attendance", icon: <CalendarCheck size={20} /> },
-    { name: "Courses", path: "/courses", icon: <BookOpen size={20} /> },
-    { name: "Fees", path: "/fees", icon: <CreditCard size={20} /> },
+    { name: "Dashboard", path: "/", icon: <LayoutDashboard size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
+    { name: "Students", path: "/students", icon: <Users size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
+    { name: "Add Student", path: "/addStudent", icon: <UserPlus size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
+    { name: "Attendance", path: "/attendance", icon: <CalendarCheck size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
+    { name: "Courses", path: "/courses", icon: <BookOpen size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
+    { name: "Fees", path: "/fees", icon: <CreditCard size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
   ];
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
+
   return (
-    <div className="h-screen w-64 glass-dark text-white flex flex-col transition-all duration-300 shadow-2xl">
-      <div className="p-6 flex items-center gap-3 border-b border-gray-700/50">
-        <div className="w-10 h-10 rounded-xl bg-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-          <BookOpen size={24} className="text-white" />
+    <div className="h-full min-h-screen w-72 bg-[#0f172a] text-slate-100 flex flex-col transition-all duration-300 shadow-2xl relative overflow-hidden">
+      {/* Decorative Blob */}
+      <div className="absolute top-[-50px] right-[-50px] w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+      
+      <div className="p-8 flex items-center gap-4 relative z-10 border-b border-white/5">
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/40 transform hover:rotate-12 transition-transform duration-300">
+          <BookOpen size={28} className="text-white" />
         </div>
-        <h2 className="text-xl font-bold tracking-wide">
-          Edu<span className="text-indigo-400">Core</span>
-        </h2>
+        <div>
+          <h2 className="text-2xl font-black tracking-tight text-white">
+            Edu<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Core</span>
+          </h2>
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5 block">Admin Portal</span>
+        </div>
       </div>
 
-      <motion.div 
+      <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="flex-1 overflow-y-auto py-6 px-4 space-y-2"
+        className="flex-1 overflow-y-auto py-8 px-5 space-y-2 relative z-10 scrollbar-hide"
       >
         {navLinks.map((link) => {
           const isActive = location.pathname === link.path;
@@ -61,33 +89,61 @@ function Sidebar({ onCloseMobile }) {
               <Link
                 to={link.path}
                 onClick={onCloseMobile}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative overflow-hidden ${
-                isActive 
-                  ? "bg-indigo-600/20 text-indigo-400 font-medium" 
-                  : "text-gray-400 hover:text-white hover:bg-white/5"
-              }`}
-            >
-              {isActive && (
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500 rounded-r-md"></div>
-              )}
-              <span className={`${isActive ? "text-indigo-400" : "group-hover:text-white"}`}>
-                {link.icon}
-              </span>
+                className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 group relative overflow-hidden ${isActive
+                    ? "bg-gradient-to-r from-indigo-600/30 to-purple-600/10 text-white font-bold tracking-wide shadow-sm"
+                    : "text-slate-400 hover:text-white hover:bg-white/5 font-medium tracking-wide"
+                  }`}
+              >
+                <AnimatePresence>
+                  {isActive && (
+                    <motion.div 
+                      layoutId="activeTab"
+                      className="absolute inset-0 border border-indigo-500/30 rounded-2xl bg-indigo-500/10 z-0" 
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                </AnimatePresence>
+                <div className="relative z-10 flex items-center gap-4">
+                  <div className={`${isActive ? "text-indigo-400" : "text-slate-500 group-hover:text-slate-300"}`}>
+                    {link.icon}
+                  </div>
+                  <span>{link.name}</span>
+                </div>
               </Link>
             </motion.div>
           );
         })}
       </motion.div>
 
-      <div className="p-4 border-t border-gray-700/50">
-        <motion.button 
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-3 px-4 py-3 w-full text-left rounded-xl text-gray-400 hover:text-red-400 hover:bg-red-400/10 transition-all duration-200"
-        >
-          <LogOut size={20} />
-          <span>Logout</span>
-        </motion.button>
+      <div className="p-6 relative z-10">
+        <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent mb-6"></div>
+        
+        <div className="flex flex-col gap-2">
+          {/* Theme Toggle */}
+          <motion.button
+            onClick={() => setIsDarkMode(!isDarkMode)}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="flex items-center gap-4 px-5 py-3.5 w-full text-left rounded-2xl text-slate-400 hover:text-white font-bold transition-all duration-300 group bg-white/5 hover:bg-white/10"
+          >
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${isDarkMode ? 'bg-indigo-500/20 text-indigo-400' : 'bg-amber-500/20 text-amber-500'}`}>
+              {isDarkMode ? <Moon size={20} /> : <Sun size={20} />}
+            </div>
+            <span>{isDarkMode ? "Dark Mode" : "Light Mode"}</span>
+          </motion.button>
+
+          <motion.button
+            onClick={handleLogout}
+            whileHover={{ scale: 1.02, backgroundColor: "rgba(239, 68, 68, 0.15)" }}
+            whileTap={{ scale: 0.98 }}
+            className="flex items-center gap-4 px-5 py-4 w-full text-left rounded-2xl text-slate-400 hover:text-red-400 font-bold transition-all duration-300 group"
+          >
+            <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center group-hover:bg-red-500/20 group-hover:text-red-500 transition-colors">
+              <LogOut size={20} className="transition-transform group-hover:-translate-x-1" />
+            </div>
+            <span>Secure Logout</span>
+          </motion.button>
+        </div>
       </div>
     </div>
   );

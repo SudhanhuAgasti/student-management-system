@@ -1,27 +1,22 @@
 const express = require("express");
-
 const router = express.Router();
 
-const Attendance = require("../models/Attendance");
+const {
+  markAttendance,
+  getAttendance,
+  getStats,
+  autoAbsent
+} = require("../controllers/attendanceController");
 
-router.post("/markAttendance", async(req,res)=>{
 
- const attendance = new Attendance(req.body);
 
- await attendance.save();
+router.post("/attendance", markAttendance);
 
- res.json({
-   message:"Attendance Marked"
- });
 
-});
+router.get("/attendance", getAttendance);
 
-router.get("/attendance", async(req,res)=>{
+router.get("/attendance/stats", getStats);
 
- const data = await Attendance.find().populate("studentId");
-
- res.json(data);
-
-});
+router.get("/attendance/auto-absent", autoAbsent);
 
 module.exports = router;

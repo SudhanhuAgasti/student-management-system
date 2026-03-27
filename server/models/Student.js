@@ -6,7 +6,12 @@ const studentSchema = new mongoose.Schema({
     required: true
   },
 
-  phone: String,
+ phone: {
+  type: String,
+  required: [true, "Please enter your Phone Number!"],
+  minlength: 10,
+  maxlength: 10
+},
 
   course: String,
 

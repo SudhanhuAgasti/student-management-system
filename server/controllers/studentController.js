@@ -1,49 +1,52 @@
 const Student = require("../models/Student");
 
-exports.addStudent = async (req,res)=>{
-
-  try{
-
+exports.addStudent = async (req, res, next) => {
+  try {
     const student = new Student(req.body);
-
     await student.save();
 
-    res.json({
-      message:"Student Added Successfully"
+    res.status(201).json({
+      message: "Student Added Successfully"
     });
-
-  }catch(err){
-
-    res.status(500).json(err);
-
+  } catch (err) {
+    next(err);
   }
-
 };
 
-exports.getStudents = async (req,res)=>{
-
-  const students = await Student.find();
-
-  res.json(students);
-
+exports.getStudents = async (req, res, next) => {
+  try {
+    const students = await Student.find();
+    res.json(students);
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.deleteStudent = async (req,res)=>{
-
-  await Student.findByIdAndDelete(req.params.id);
-
-  res.json({
-    message:"Student Deleted"
-  });
-
+exports.deleteStudent = async (req, res, next) => {
+  try {
+    const student = await Student.findByIdAndDelete(req.params.id);
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+    res.json({
+      message: "Student Deleted Successfully"
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.updateStudent = async (req,res)=>{
-
-  await Student.findByIdAndUpdate(req.params.id,req.body);
-
-  res.json({
-    message:"Student Updated"
-  });
-
+exports.updateStudent = async (req, res, next) => {
+  try {
+    const student = await Student.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+    res.json({
+      message: "Student Updated Successfully",
+      student
+    });
+  } catch (err) {
+    next(err);
+  }
 };

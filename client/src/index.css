@@ -1,17 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", sans-serif;
-  --color-primary: #4F46E5;
-  --color-primary-hover: #4338CA;
-  --color-background: #F3F4F6;
-  --color-surface: #FFFFFF;
+  --font-sans: "Outfit", sans-serif;
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-secondary: #ec4899;
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
 }
 
 body {
   font-family: var(--font-sans);
   background-color: var(--color-background);
-  color: #111827;
+  color: #0f172a;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -27,25 +29,152 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
+  background: #cbd5e1;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+  background: #94a3b8;
 }
 
-/* Glassmorphism utility classes */
+/* Premium Glassmorphism utility classes */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
 }
 
 .glass-dark {
-  background: rgba(17, 24, 39, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+}
+
+.glass-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.4));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+/* Animations */
+@keyframes blob {
+  0% { transform: translate(0px, 0px) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* ==================================================
+   UNIVERSAL DARK MODE OVERRIDES
+   ================================================== */
+html.dark body {
+  background-color: #0b1120 !important;
+  color: #f1f5f9;
+}
+
+/* Layout App overrides */
+html.dark .bg-slate-50, html.dark .bg-white {
+  background-color: transparent !important;
+}
+
+html.dark .dark-app {
+  background-color: #0b1120 !important;
+}
+
+/* Glass components in dark mode */
+html.dark .glass {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3) !important;
+}
+html.dark .glass:hover {
+  background: rgba(30, 41, 59, 0.7) !important;
+}
+
+/* Modifying inline light backgrounds */
+html.dark .bg-white\/80 { background-color: rgba(15, 23, 42, 0.8) !important; }
+html.dark .bg-white\/70 { background-color: rgba(15, 23, 42, 0.7) !important; }
+html.dark .bg-white\/60 { background-color: rgba(15, 23, 42, 0.6) !important; }
+html.dark .bg-white\/50 { background-color: rgba(15, 23, 42, 0.5) !important; }
+html.dark .bg-white\/40 { background-color: rgba(15, 23, 42, 0.4) !important; }
+html.dark .bg-slate-100\/80 { background-color: rgba(30, 41, 59, 0.8) !important; }
+html.dark .bg-slate-100 { background-color: #1e293b !important; }
+html.dark .bg-slate-200 { background-color: #334155 !important; }
+html.dark .bg-slate-50 { background-color: rgba(15,23,42,0.4) !important; }
+
+/* Text color overrides */
+html.dark .text-slate-900 { color: #f8fafc !important; }
+html.dark .text-slate-800 { color: #f1f5f9 !important; }
+html.dark .text-slate-700 { color: #e2e8f0 !important; }
+html.dark .text-slate-600 { color: #cbd5e1 !important; }
+html.dark .text-slate-500 { color: #94a3b8 !important; }
+html.dark .text-slate-400 { color: #64748b !important; }
+html.dark .text-gray-900 { color: #f8fafc !important; }
+html.dark .text-gray-800 { color: #f1f5f9 !important; }
+html.dark .text-slate-800\/60 { color: rgba(241, 245, 249, 0.6) !important; }
+
+/* Invert borders */
+html.dark .border-slate-100 { border-color: #1e293b !important; }
+html.dark .border-slate-200 { border-color: #334155 !important; }
+html.dark .border-slate-100\/50 { border-color: rgba(30, 41, 59, 0.5) !important; }
+html.dark .border-slate-200\/50 { border-color: rgba(51, 65, 85, 0.5) !important; }
+html.dark .border-slate-200\/60 { border-color: rgba(51, 65, 85, 0.6) !important; }
+html.dark .border-white { border-color: rgba(255, 255, 255, 0.1) !important; }
+
+/* Inputs and Forms */
+html.dark input[type="text"],
+html.dark input[type="email"],
+html.dark input[type="number"],
+html.dark input[type="password"],
+html.dark input[type="date"] {
+  background-color: rgba(15, 23, 42, 0.5) !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+html.dark input::placeholder {
+  color: #64748b !important;
+}
+
+/* Modifying the global gradient for tables */
+html.dark .hover\:bg-white\/80:hover {
+  background-color: rgba(30, 41, 59, 0.8) !important;
+}
+html.dark .divide-slate-100\/50 > :not([hidden]) ~ :not([hidden]) {
+  border-color: rgba(30, 41, 59, 0.5) !important;
+}
+
+/* Fix Attendance P/A buttons text color mismatch on hover */
+html.dark .hover\:text-white:hover {
+  color: #ffffff !important;
+}
+
+/* Quick register pill backgrounds inside dark */
+html.dark .bg-emerald-100 { background-color: rgba(16, 185, 129, 0.15) !important; }
+html.dark .bg-teal-50 { background-color: rgba(20, 184, 166, 0.15) !important; }
+html.dark .bg-red-100 { background-color: rgba(239, 68, 68, 0.15) !important; }
+
+/* Make the scrollbar dark when in darkmode */
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }
