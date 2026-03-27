@@ -21,45 +21,54 @@ function AppContent() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="flex bg-gray-50 min-h-screen text-gray-900 font-sans antialiased overflow-hidden">
+    <div className="flex bg-slate-50 dark-app min-h-screen text-slate-800 font-sans antialiased overflow-hidden relative transition-colors duration-500">
+      
+      {/* Global Background Elements */}
+      {!isAuthPage && (
+        <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl transition-colors duration-500"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-pink-500/5 dark:bg-pink-500/10 rounded-full blur-3xl transition-colors duration-500"></div>
+        </div>
+      )}
+
       {!isAuthPage && (
         <>
           {/* Mobile Overlay */}
           {isMobileMenuOpen && (
             <div 
-              className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm transition-opacity"
+              className="fixed inset-0 bg-slate-900/60 z-40 md:hidden backdrop-blur-sm transition-opacity"
               onClick={() => setIsMobileMenuOpen(false)}
             />
           )}
 
           {/* Sidebar Drawer */}
-          <div className={`fixed inset-y-0 left-0 z-50 transform ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"} md:relative md:translate-x-0 transition-transform duration-300 ease-in-out flex`}>
+          <div className={`fixed inset-y-0 left-0 z-50 transform ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"} md:sticky md:translate-x-0 md:top-0 md:h-screen transition-transform duration-300 ease-in-out flex shadow-2xl md:shadow-none`}>
              <Sidebar onCloseMobile={() => setIsMobileMenuOpen(false)} />
           </div>
         </>
       )}
 
       {/* Main Content Area */}
-      <div className={`flex-1 flex flex-col min-h-screen overflow-x-hidden ${!isAuthPage ? "w-full md:w-auto" : ""}`}>
+      <div className={`flex-1 flex flex-col min-h-screen overflow-x-hidden relative z-10 ${!isAuthPage ? "w-full md:w-auto" : ""}`}>
         
         {/* Mobile Top Bar */}
         {!isAuthPage && (
-           <div className="md:hidden flex items-center justify-between p-4 bg-white border-b border-gray-100 z-30 sticky top-0 shadow-sm">
-             <div className="flex items-center gap-2">
-               <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center">
-                 <BookOpen size={20} className="text-white" />
+           <div className="md:hidden flex items-center justify-between p-4 bg-white/80 border-b border-slate-200/50 z-30 sticky top-0 shadow-sm backdrop-blur-lg">
+             <div className="flex items-center gap-3">
+               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md shadow-indigo-500/30">
+                 <BookOpen size={22} className="text-white" />
                </div>
-               <h2 className="text-lg font-bold tracking-wide">
-                 Edu<span className="text-indigo-400">Core</span>
+               <h2 className="text-xl font-black tracking-tight text-slate-800">
+                 Edu<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">Core</span>
                </h2>
              </div>
-             <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+             <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 text-slate-500 hover:bg-slate-100 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
                <Menu size={24} />
              </button>
            </div>
         )}
 
-        <div className={`flex-1 ${!isAuthPage ? "p-4 md:p-8" : ""}`}>
+        <div className={`flex-1 ${!isAuthPage ? "p-4 md:p-8 lg:p-10" : ""}`}>
           <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
