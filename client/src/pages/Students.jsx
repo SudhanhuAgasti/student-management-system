@@ -62,30 +62,30 @@ function Students() {
       
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
         <div>
-          <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 flex items-center gap-3 tracking-tight">
-            <Users className="text-indigo-500" size={36} />
+          <h1 className="text-4xl font-black text-slate-900 dark:text-white flex items-center gap-4 tracking-tighter">
+            <Users className="text-indigo-600 dark:text-indigo-400" size={36} />
             Students Roster
           </h1>
-          <p className="text-slate-500 mt-2 text-lg">Manage all enrolled students across your institution with ease.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-3 text-lg font-medium tracking-wide">Manage all enrolled students across your institution with ease.</p>
         </div>
         
         <div className="relative group w-full sm:w-auto">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-300"></div>
+          <div className="absolute -inset-0.5 bg-linear-to-r from-indigo-500 to-purple-600 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-300"></div>
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={20} />
             <input 
               type="text" 
               placeholder="Search by name or course..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 pr-4 py-3 bg-white/80 backdrop-blur-md border-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-800 font-medium w-full sm:w-72 shadow-xl shadow-indigo-100/20 transition-all placeholder:text-slate-400"
+              className="pl-12 pr-6 py-4 bg-white dark:bg-slate-800 border-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-800 dark:text-white font-black w-full sm:w-80 shadow-2xl transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
             />
           </div>
         </div>
       </div>
 
-      <div className="glass border-0 bg-white/60 rounded-[2rem] shadow-xl shadow-slate-200/50 overflow-hidden backdrop-blur-xl p-2">
-        <div className="overflow-x-auto rounded-[1.5rem] bg-white/40">
+      <div className="glass border-0 bg-white/60 rounded-4xlshadow-xl shadow-slate-200/50 overflow-hidden backdrop-blur-xl p-2">
+        <div className="overflow-x-auto rounded-3xl bg-white/40">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-200/60 bg-white/50">
@@ -126,7 +126,7 @@ function Students() {
                     >
                       <td className="px-8 py-5 whitespace-nowrap">
                         <div className="flex items-center gap-4">
-                          <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 text-indigo-600 flex items-center justify-center font-black text-lg shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all">
+                          <div className="h-12 w-12 rounded-2xl bg-linear-to-br from-indigo-100 to-purple-100 text-indigo-600 flex items-center justify-center font-black text-lg shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all">
                             {s.name.charAt(0).toUpperCase()}
                           </div>
                           <span className="font-bold text-slate-800 text-lg tracking-tight">{s.name}</span>
@@ -134,7 +134,7 @@ function Students() {
                       </td>
                       <td className="px-8 py-5 whitespace-nowrap font-medium text-slate-500">{s.phone}</td>
                       <td className="px-8 py-5 whitespace-nowrap">
-                        <span className="inline-flex items-center px-4 py-1.5 rounded-xl text-sm font-bold bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 shadow-sm border border-purple-200/50">
+                        <span className="inline-flex items-center px-4 py-1.5 rounded-xl text-sm font-bold bg-linear-to-r from-purple-100 to-pink-100 text-purple-800 shadow-sm border border-purple-200/50">
                           {s.course}
                         </span>
                       </td>

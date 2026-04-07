@@ -5,6 +5,7 @@ import {
   Users,
   UserPlus,
   CalendarCheck,
+  ScanFace,
   BookOpen,
   CreditCard,
   LogOut,
@@ -30,6 +31,8 @@ const linkVariants = {
 
 function Sidebar({ onCloseMobile }) {
   const location = useLocation();
+  const adminName = localStorage.getItem("adminName") || "Admin";
+  const adminEmail = localStorage.getItem("adminEmail") || "";
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("theme") === "dark" || 
       (!localStorage.getItem("theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
@@ -49,30 +52,46 @@ function Sidebar({ onCloseMobile }) {
     { name: "Dashboard", path: "/", icon: <LayoutDashboard size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
     { name: "Students", path: "/students", icon: <Users size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
     { name: "Add Student", path: "/addStudent", icon: <UserPlus size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
-    { name: "Attendance", path: "/attendance", icon: <CalendarCheck size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
+    { name: "Attendance", path: "/attendance", icon: <ScanFace size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
+    { name: "Face Enrollment", path: "/face-registration", icon: <UserPlus size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
     { name: "Courses", path: "/courses", icon: <BookOpen size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
     { name: "Fees", path: "/fees", icon: <CreditCard size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
   ];
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("adminName");
+    localStorage.removeItem("adminEmail");
     window.location.href = "/login";
   };
 
   return (
     <div className="h-full min-h-screen w-72 bg-[#0f172a] text-slate-100 flex flex-col transition-all duration-300 shadow-2xl relative overflow-hidden">
       {/* Decorative Blob */}
-      <div className="absolute top-[-50px] right-[-50px] w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute -top-12.5 -right-12.5w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
       
       <div className="p-8 flex items-center gap-4 relative z-10 border-b border-white/5">
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/40 transform hover:rotate-12 transition-transform duration-300">
+        <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/40 transform hover:rotate-12 transition-transform duration-300">
           <BookOpen size={28} className="text-white" />
         </div>
         <div>
           <h2 className="text-2xl font-black tracking-tight text-white">
-            Edu<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Core</span>
+            Edu<span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-purple-400">Core</span>
           </h2>
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5 block">Admin Portal</span>
+        </div>
+      </div>
+
+      {/* Admin Identity Badge */}
+      <div className="px-6 py-4 mx-4 mb-2 rounded-2xl bg-white/5 border border-white/10">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-lg">
+            {adminName ? adminName.charAt(0).toUpperCase() : "A"}
+          </div>
+          <div className="overflow-hidden">
+            <p className="text-sm font-bold text-white truncate">{adminName || "Admin"}</p>
+            <p className="text-xs text-slate-500 truncate">{adminEmail}</p>
+          </div>
         </div>
       </div>
 
@@ -90,7 +109,7 @@ function Sidebar({ onCloseMobile }) {
                 to={link.path}
                 onClick={onCloseMobile}
                 className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 group relative overflow-hidden ${isActive
-                    ? "bg-gradient-to-r from-indigo-600/30 to-purple-600/10 text-white font-bold tracking-wide shadow-sm"
+                    ? "bg-linear-to-r from-indigo-600/30 to-purple-600/10 text-white font-bold tracking-wide shadow-sm"
                     : "text-slate-400 hover:text-white hover:bg-white/5 font-medium tracking-wide"
                   }`}
               >
@@ -116,7 +135,7 @@ function Sidebar({ onCloseMobile }) {
       </motion.div>
 
       <div className="p-6 relative z-10">
-        <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent mb-6"></div>
+        <div className="w-full h-px bg-linear-to-r from-transparent via-white/10 to-transparent mb-6"></div>
         
         <div className="flex flex-col gap-2">
           {/* Theme Toggle */}

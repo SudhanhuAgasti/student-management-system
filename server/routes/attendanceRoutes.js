@@ -5,13 +5,13 @@ const {
   markAttendance,
   getAttendance,
   getStats,
-  autoAbsent
+  autoAbsent,
+  recognizeAndMarkAttendance
 } = require("../controllers/attendanceController");
 
 
 
-router.post("/attendance", markAttendance);
-
+router.post("/attendance/recognize", recognizeAndMarkAttendance);
 
 router.get("/attendance", getAttendance);
 

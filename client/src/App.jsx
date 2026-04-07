@@ -12,6 +12,7 @@ import Register from "./pages/Register";
 import Fees from "./pages/Fees";
 import Courses from "./pages/Courses";
 import Attendance from "./pages/Attendance";
+import FaceRegistration from "./pages/FaceRegistration";
 import PageTransition from "./components/PageTransition";
 import { AnimatePresence } from "framer-motion";
 
@@ -21,7 +22,7 @@ function AppContent() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="flex bg-slate-50 dark-app min-h-screen text-slate-800 font-sans antialiased overflow-hidden relative transition-colors duration-500">
+    <div className="flex bg-slate-50 dark:bg-[#020617] min-h-screen text-slate-800 dark:text-slate-100 font-sans antialiased overflow-hidden relative transition-colors duration-500">
       
       {/* Global Background Elements */}
       {!isAuthPage && (
@@ -53,16 +54,16 @@ function AppContent() {
         
         {/* Mobile Top Bar */}
         {!isAuthPage && (
-           <div className="md:hidden flex items-center justify-between p-4 bg-white/80 border-b border-slate-200/50 z-30 sticky top-0 shadow-sm backdrop-blur-lg">
+           <div className="md:hidden flex items-center justify-between p-4 bg-white/80 dark:bg-slate-900/80 border-b border-slate-200/50 dark:border-slate-700/50 z-30 sticky top-0 shadow-sm backdrop-blur-lg transition-colors">
              <div className="flex items-center gap-3">
-               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md shadow-indigo-500/30">
+               <div className="w-10 h-10 rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md shadow-indigo-500/30">
                  <BookOpen size={22} className="text-white" />
                </div>
-               <h2 className="text-xl font-black tracking-tight text-slate-800">
-                 Edu<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">Core</span>
+               <h2 className="text-xl font-black tracking-tight text-slate-800 dark:text-white">
+                 Edu<span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-500 to-purple-500">Core</span>
                </h2>
              </div>
-             <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 text-slate-500 hover:bg-slate-100 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
+             <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors focus:outline-none">
                <Menu size={24} />
              </button>
            </div>
@@ -81,6 +82,7 @@ function AppContent() {
               <Route path="/courses" element={<PageTransition><Courses /></PageTransition>} />
               <Route path="/fees" element={<PageTransition><Fees /></PageTransition>} />
               <Route path="/attendance" element={<PageTransition><Attendance /></PageTransition>} />
+              <Route path="/face-registration" element={<PageTransition><FaceRegistration /></PageTransition>} />
             </Route>
           </Routes>
         </AnimatePresence>

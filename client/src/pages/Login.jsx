@@ -30,6 +30,10 @@ function Login() {
     try {
       const res = await API.post("/auth/login", { email, password });
       localStorage.setItem("token", res.data.token);
+      if (res.data.admin) {
+        localStorage.setItem("adminName", res.data.admin.name || "");
+        localStorage.setItem("adminEmail", res.data.admin.email || "");
+      }
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Invalid credentials. Please try again.");
@@ -40,18 +44,17 @@ function Login() {
 
   return (
     <div className="min-h-screen w-full flex bg-[#0f172a]">
-      {/* Left Abstract Decorative Side */}
+      
       <div className="hidden lg:flex w-1/2 bg-[#0f172a] relative overflow-hidden items-center justify-center p-12">
-        {/* Abstract background shapes */}
-        <div className="absolute top-10 left-10 w-[400px] h-[400px] bg-indigo-500 rounded-full mix-blend-screen filter blur-[100px] opacity-40 animate-blob"></div>
-        <div className="absolute top-10 right-10 w-[400px] h-[400px] bg-purple-500 rounded-full mix-blend-screen filter blur-[100px] opacity-40 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-[400px] h-[400px] bg-pink-500 rounded-full mix-blend-screen filter blur-[100px] opacity-40 animate-blob animation-delay-4000"></div>
+        <div className="absolute top-10 left-10 w-100 h-100 bg-indigo-500 rounded-full mix-blend-screen filter blur-[100px] opacity-40 animate-blob"></div>
+        <div className="absolute top-10 right-10 w-100 h-100 bg-purple-500 rounded-full mix-blend-screen filter blur-[100px] opacity-40 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-20 w-100 h-100 bg-pink-500 rounded-full mix-blend-screen filter blur-[100px] opacity-40 animate-blob animation-delay-4000"></div>
         
         <div className="relative z-10 text-white p-12 max-w-2xl glass-dark rounded-[3rem] shadow-2xl border border-white/10">
-          <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl flex items-center justify-center mb-10 shadow-lg shadow-indigo-500/30">
+          <div className="w-20 h-20 bg-linear-to-br from-indigo-500 to-purple-600 rounded-3xl flex items-center justify-center mb-10 shadow-lg shadow-indigo-500/30">
             <BookOpen size={40} className="text-white relative z-10" />
           </div>
-          <h1 className="text-6xl font-black mb-8 leading-[1.1] tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-slate-400">
+          <h1 className="text-6xl font-black mb-8 leading-[1.1] tracking-tight text-transparent bg-clip-text bg-linear-to-br from-white via-white to-slate-400">
             Manage your institution<br/>seamlessly.
           </h1>
           <p className="text-slate-300 text-xl font-medium leading-relaxed">
@@ -60,7 +63,7 @@ function Login() {
         </div>
       </div>
 
-      {/* Right Login Form Side */}
+     
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-24 relative bg-white rounded-l-[3rem] lg:shadow-[-20px_0_50px_rgba(0,0,0,0.1)] z-20">
         <motion.div 
           variants={formVariants}
@@ -129,14 +132,14 @@ function Login() {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center items-center gap-3 py-4 px-4 rounded-2xl shadow-lg md:text-lg font-bold text-white bg-gradient-to-r from-indigo-500 to-purple-600 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-indigo-500 transition-all disabled:opacity-70 disabled:cursor-not-allowed mt-8"
+              className="w-full flex justify-center items-center gap-3 py-4 px-4 rounded-2xl shadow-lg md:text-lg font-bold text-white bg-linear-to-r from-indigo-500 to-purple-600 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-indigo-500 transition-all disabled:opacity-70 disabled:cursor-not-allowed mt-8"
             >
               {isLoading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   Signing in...
                 </>
-              ) : "Sign in to Dashboard"}
+              ) : "Sign in to your Institute"}
             </motion.button>
           </form>
 

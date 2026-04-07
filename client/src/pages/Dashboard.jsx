@@ -1,140 +1,421 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
-import StudentChart from "../components/StudentChart";
-import { Users, ClipboardCheck, IndianRupee, TrendingUp, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Users, ClipboardCheck, IndianRupee, TrendingDown,
+  BellRing, CheckCircle2, AlertCircle, BookOpen,
+  BarChart3, PieChart, ArrowUpRight, Sparkles
+} from "lucide-react";
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, PieChart as RechartsPie, Pie, Cell, Legend
+} from "recharts";
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15
-    }
+const RADIAN = Math.PI / 180;
+
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl p-4 shadow-2xl">
+        <p className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">{label}</p>
+        <p className="text-2xl font-black text-slate-900 dark:text-white">{payload[0].value}</p>
+      </div>
+    );
   }
+  return null;
 };
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
-};
+const COLORS = ["#6366f1", "#10b981", "#f59e0b", "#f43f5e", "#8b5cf6", "#06b6d4"];
+
+function StatCard({ icon, label, value, color, trend, prefix = "" }) {
+  const colors = {
+    indigo: { bg: "bg-indigo-500", light: "bg-indigo-50 dark:bg-indigo-500/10", text: "text-indigo-600 dark:text-indigo-400", border: "border-indigo-100 dark:border-indigo-500/20" },
+    emerald: { bg: "bg-emerald-500", light: "bg-emerald-50 dark:bg-emerald-500/10", text: "text-emerald-600 dark:text-emerald-400", border: "border-emerald-100 dark:border-emerald-500/20" },
+    rose: { bg: "bg-rose-500", light: "bg-rose-50 dark:bg-rose-500/10", text: "text-rose-600 dark:text-rose-400", border: "border-rose-100 dark:border-rose-500/20" },
+    amber: { bg: "bg-amber-500", light: "bg-amber-50 dark:bg-amber-500/10", text: "text-amber-600 dark:text-amber-400", border: "border-amber-100 dark:border-amber-500/20" },
+  };
+
+  const c = colors[color] || colors.indigo;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: "spring", stiffness: 280, damping: 22 }}
+      className="bg-white dark:bg-[#111827] rounded-3xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-lg hover:shadow-slate-200/60 dark:hover:shadow-slate-900/40 transition-all duration-300 group"
+    >
+      <div className="flex items-start justify-between mb-6">
+        <div className={`w-12 h-12 rounded-2xl ${c.light} ${c.border} border flex items-center justify-center ${c.text}`}>
+          {icon}
+        </div>
+        {trend && (
+          <div className="flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-2.5 py-1 rounded-full">
+            <ArrowUpRight size={13} />{trend}
+          </div>
+        )}
+      </div>
+      <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">{label}</p>
+      <p className={`text-4xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums`}>
+        {prefix}{typeof value === "number" ? value.toLocaleString() : value}
+      </p>
+    </motion.div>
+  );
+}
 
 function Dashboard() {
   const [data, setData] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [reminderStatus, setReminderStatus] = useState(null);
+  const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     API.get("/dashboard")
-      .then(res => setData(res.data))
-      .catch(err => console.error("Error fetching dashboard data", err));
+      .then(res => { setData(res.data); setIsLoading(false); })
+      .catch(() => setIsLoading(false));
   }, []);
 
+  const handleSendReminders = async () => {
+    setIsSending(true);
+    try {
+      const res = await API.post("/fees/reminders");
+      setReminderStatus({ type: "success", message: res.data.message });
+    } catch {
+      setReminderStatus({ type: "error", message: "Could not send reminders." });
+    } finally {
+      setIsSending(false);
+      setTimeout(() => setReminderStatus(null), 5000);
+    }
+  };
+
+  const barData = [
+    { name: "Students", value: data.totalStudents || 0, fill: "#6366f1" },
+    { name: "Attendance", value: data.totalAttendance || 0, fill: "#10b981" },
+    { name: "Transactions", value: data.feeTransactionsCount || 0, fill: "#f59e0b" },
+  ];
+
+  const pieData = (data.courseStats || []).map((c, i) => ({
+    name: c._id || "Other",
+    value: c.count,
+    fill: COLORS[i % COLORS.length],
+  }));
+
+  const totalRevenue = data.totalRevenue || 0;
+  const totalPending = data.totalPendingFees || 0;
+  const collectRate = totalRevenue + totalPending > 0
+    ? Math.round((totalRevenue / (totalRevenue + totalPending)) * 100) : 0;
+
   return (
-    <motion.div 
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-      className="max-w-7xl mx-auto space-y-10"
-    >
-      
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-8 pb-12">
+
+      {/* Toast */}
+      <AnimatePresence>
+        {reminderStatus && (
+          <motion.div
+            initial={{ opacity: 0, y: -60 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className={`fixed top-8 right-8 z-200 min-w-80 p-6 rounded-3xl shadow-2xl flex items-center gap-5 border-2 transition-all ${
+              reminderStatus.type === "success"
+                ? "bg-white dark:bg-[#111827] border-emerald-500 text-emerald-600"
+                : "bg-white dark:bg-[#111827] border-rose-500 text-rose-600"
+            }`}
+          >
+            {reminderStatus.type === "success"
+              ? <CheckCircle2 size={24} />
+              : <AlertCircle size={24} />}
+            <div>
+              <p className="font-black text-slate-900 dark:text-white text-sm">Fee Reminders</p>
+              <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400 font-medium">{reminderStatus.message}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Header ── */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 tracking-tight flex items-center gap-3">
-            Overview Dashboard <Sparkles className="text-pink-500" size={28} />
+          <p className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
+            Admin Portal
+          </p>
+          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
+            Good {new Date().getHours() < 12 ? "Morning" : new Date().getHours() < 18 ? "Afternoon" : "Evening"}, {" "}
+            <span className="text-indigo-600 dark:text-indigo-400">
+              {localStorage.getItem("adminName") || "Admin"}
+            </span> 👋
           </h1>
-          <p className="text-slate-500 mt-2 text-lg font-medium">
-            Welcome back! Here's what's happening in your institute today.
+          <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">
+            Here's what's happening at your institute today.
           </p>
         </div>
-      </div>
-
-      {/* Analytics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        
-        {/* Total Students Card */}
-        <motion.div variants={itemVariants} className="relative overflow-hidden glass-card p-8 rounded-[2rem] hover:-translate-y-2 transition-transform duration-300 group">
-          <div className="absolute -right-8 -top-8 w-40 h-40 bg-gradient-to-br from-indigo-400 to-purple-400 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500 z-0"></div>
-          <div className="relative z-10 flex flex-col h-full justify-between">
-            <div className="flex items-center justify-between mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
-                <Users size={28} />
-              </div>
-              <span className="flex items-center gap-1 text-sm font-bold text-emerald-600 bg-emerald-100/80 px-3 py-1.5 rounded-full shadow-sm">
-                <TrendingUp size={16} /> +12%
-              </span>
-            </div>
-            <div>
-              <h3 className="text-slate-500 text-sm font-bold uppercase tracking-wider mb-2">Total Enrolled</h3>
-              <h1 className="text-5xl font-black text-slate-800 tracking-tight">
-                {data.totalStudents || 0}
-              </h1>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Total Attendance Card */}
-        <motion.div variants={itemVariants} className="relative overflow-hidden glass-card p-8 rounded-[2rem] hover:-translate-y-2 transition-transform duration-300 group">
-          <div className="absolute -right-8 -top-8 w-40 h-40 bg-gradient-to-br from-emerald-400 to-teal-400 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500 z-0"></div>
-          <div className="relative z-10 flex flex-col h-full justify-between">
-            <div className="flex items-center justify-between mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
-                <ClipboardCheck size={28} />
-              </div>
-            </div>
-            <div>
-              <h3 className="text-slate-500 text-sm font-bold uppercase tracking-wider mb-2">Attendance Records</h3>
-              <h1 className="text-5xl font-black text-slate-800 tracking-tight">
-                {data.totalAttendance || 0}
-              </h1>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Total Fees Card */}
-        <motion.div variants={itemVariants} className="relative overflow-hidden glass-card p-8 rounded-[2rem] hover:-translate-y-2 transition-transform duration-300 group">
-          <div className="absolute -right-8 -top-8 w-40 h-40 bg-gradient-to-br from-pink-400 to-orange-400 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500 z-0"></div>
-          <div className="relative z-10 flex flex-col h-full justify-between">
-            <div className="flex items-center justify-between mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500 to-orange-400 flex items-center justify-center text-white shadow-lg shadow-pink-500/30">
-                <IndianRupee size={28} />
-              </div>
-            </div>
-            <div>
-              <h3 className="text-slate-500 text-sm font-bold uppercase tracking-wider mb-2">Total Fee Transactions</h3>
-              <h1 className="text-5xl font-black text-slate-800 tracking-tight">
-                {data.totalFees || 0}
-              </h1>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Chart Section */}
-      <motion.div variants={itemVariants} className="glass border-0 bg-white/70 p-8 rounded-[2rem] shadow-xl shadow-slate-200/50">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
-            <div className="p-2 bg-indigo-100 rounded-lg text-indigo-600">
-              <TrendingUp size={24} />
-            </div>
-            Growth Analytics
-          </h2>
+        <div className="flex items-center gap-2 bg-white dark:bg-[#111827] border border-slate-100 dark:border-slate-800 rounded-2xl p-1.5 shadow-sm">
+          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+          <span className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest pr-2">Live Data</span>
         </div>
-        <div className="w-full h-96 flex justify-center bg-white/50 backdrop-blur-sm rounded-2xl p-4 border border-white">
-          {Object.keys(data).length > 0 ? (
-            <StudentChart
-              students={data.totalStudents}
-              attendance={data.totalAttendance}
-              fees={data.totalFees}
-            />
-          ) : (
-            <div className="flex items-center justify-center h-full w-full text-slate-400 font-medium">
-              Loading analytics...
+      </div>
+
+      {/* ── Stat Cards ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard
+          icon={<Users size={22} />}
+          label="Total Students"
+          value={data.totalStudents || 0}
+          color="indigo"
+        />
+        <StatCard
+          icon={<ClipboardCheck size={22} />}
+          label="Attendance Logs"
+          value={data.totalAttendance || 0}
+          color="emerald"
+        />
+        <StatCard
+          icon={<IndianRupee size={22} />}
+          label="Net Revenue"
+          value={data.totalRevenue || 0}
+          color="amber"
+          prefix="₹"
+        />
+        <StatCard
+          icon={<TrendingDown size={22} />}
+          label="Pending Fees"
+          value={data.totalPendingFees || 0}
+          color="rose"
+          prefix="₹"
+        />
+      </div>
+
+      {/* ── Financial Summary Band ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        className="bg-white dark:bg-[#111827] rounded-3xl p-6 sm:p-8 border border-slate-100 dark:border-slate-800 shadow-sm"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          {/* Left: Revenue split */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-500/20">
+                <BarChart3 size={20} />
+              </div>
+              <div>
+                <h3 className="font-black text-slate-900 dark:text-white text-lg leading-none">Financial Overview</h3>
+                <p className="text-xs text-slate-400 dark:text-slate-500 font-medium mt-0.5">Collection progress this cycle</p>
+              </div>
             </div>
-          )}
+
+            {/* Progress Bar */}
+            <div className="space-y-2">
+              <div className="flex justify-between items-center text-sm">
+                <span className="font-bold text-emerald-600 dark:text-emerald-400">Collected — ₹{totalRevenue.toLocaleString()}</span>
+                <span className="font-black text-slate-900 dark:text-white">{collectRate}%</span>
+              </div>
+              <div className="h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${collectRate}%` }}
+                  transition={{ duration: 1.2, ease: "easeOut" }}
+                  className="h-full bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full"
+                />
+              </div>
+              <div className="flex justify-between items-center text-xs font-bold text-slate-400 dark:text-slate-500">
+                <span>₹0</span>
+                <span className="text-rose-500 dark:text-rose-400">Outstanding — ₹{totalPending.toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Send Reminders Button */}
+          <div className="sm:border-l border-slate-100 dark:border-slate-800 sm:pl-8 shrink-0">
+            <p className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">
+              {data.totalPendingFees > 0 ? "Action Needed" : "All Clear"}
+            </p>
+            <motion.button
+              onClick={handleSendReminders}
+              disabled={isSending}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className={`flex items-center gap-3 px-6 py-4 rounded-2xl font-black text-sm transition-all shadow-lg ${
+                isSending
+                  ? "bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"
+                  : "bg-linear-to-r from-rose-500 to-pink-600 text-white shadow-rose-500/25 hover:shadow-rose-500/40"
+              }`}
+            >
+              <BellRing size={18} className={isSending ? "" : "animate-none"} />
+              {isSending ? "Sending…" : "Notify Defaulters"}
+            </motion.button>
+            <p className="text-xs text-slate-400 dark:text-slate-500 font-medium mt-2">
+              {totalPending > 0 ? `${pieData.length} course(s) with dues` : "No pending dues 🎉"}
+            </p>
+          </div>
         </div>
       </motion.div>
 
-    </motion.div>
+     
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+   
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="lg:col-span-2 bg-white dark:bg-[#111827] rounded-3xl p-6 sm:p-8 border border-slate-100 dark:border-slate-800 shadow-sm"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-8">
+            <div>
+              <h3 className="font-black text-slate-900 dark:text-white text-xl tracking-tight">Growth Analytics</h3>
+              <p className="text-sm text-slate-400 dark:text-slate-500 font-medium mt-1">Students · Attendance · Transactions</p>
+            </div>
+            <span className="self-start sm:self-auto px-4 py-2 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-full text-xs font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-500/20">
+              Overall
+            </span>
+          </div>
+
+          {isLoading ? (
+            <div className="h-72 flex items-center justify-center">
+              <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={barData} barSize={48}>
+                <defs>
+                  {barData.map((entry, i) => (
+                    <linearGradient key={i} id={`grad${i}`} x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={entry.fill} stopOpacity={0.9} />
+                      <stop offset="100%" stopColor={entry.fill} stopOpacity={0.5} />
+                    </linearGradient>
+                  ))}
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" className="dark:stroke-slate-800" />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fill: "#94a3b8", fontWeight: 700, fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  tick={{ fill: "#94a3b8", fontWeight: 700, fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                  allowDecimals={false}
+                />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(99,102,241,0.04)" }} />
+                <Bar dataKey="value" radius={[10, 10, 0, 0]}>
+                  {barData.map((entry, i) => (
+                    <Cell key={i} fill={`url(#grad${i})`} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </motion.div>
+
+        {/* Pie Chart */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-white dark:bg-[#111827] rounded-3xl p-6 sm:p-8 border border-slate-100 dark:border-slate-800 shadow-sm"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="font-black text-slate-900 dark:text-white text-xl tracking-tight">Courses</h3>
+              <p className="text-sm text-slate-400 dark:text-slate-500 font-medium mt-1">Student split</p>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-500/20">
+              <PieChart size={20} />
+            </div>
+          </div>
+
+          {isLoading ? (
+            <div className="h-56 flex items-center justify-center">
+              <div className="w-10 h-10 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+            </div>
+          ) : pieData.length === 0 ? (
+            <div className="h-56 flex flex-col items-center justify-center gap-3 text-slate-300 dark:text-slate-700">
+              <BookOpen size={48} />
+              <p className="text-sm font-bold">No courses yet</p>
+            </div>
+          ) : (
+            <>
+              <div className="relative flex items-center justify-center h-52">
+                <RechartsPie width={180} height={180}>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={55}
+                    outerRadius={85}
+                    paddingAngle={4}
+                    dataKey="value"
+                    strokeWidth={0}
+                  >
+                    {pieData.map((entry, i) => (
+                      <Cell key={i} fill={entry.fill} />
+                    ))}
+                  </Pie>
+                </RechartsPie>
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <span className="text-3xl font-black text-slate-900 dark:text-white tabular-nums">
+                    {pieData.reduce((s, c) => s + c.value, 0)}
+                  </span>
+                  <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">TOTAL</span>
+                </div>
+              </div>
+              <div className="space-y-2.5 mt-4">
+                {pieData.slice(0, 4).map((c, i) => (
+                  <div key={i} className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: c.fill }}></div>
+                      <span className="text-sm font-bold text-slate-700 dark:text-slate-300 truncate max-w-24">{c.name}</span>
+                    </div>
+                    <span className="text-sm font-black text-slate-900 dark:text-white">{c.value}</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </motion.div>
+      </div>
+
+      {/* ── Quick Access ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="bg-white dark:bg-[#111827] rounded-3xl p-6 sm:p-8 border border-slate-100 dark:border-slate-800 shadow-sm"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <h3 className="font-black text-slate-900 dark:text-white text-xl tracking-tight flex items-center gap-2">
+              <Sparkles size={20} className="text-amber-500" /> Quick Actions
+            </h3>
+            <p className="text-sm text-slate-400 dark:text-slate-500 font-medium mt-1">Shortcuts to common admin tasks</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {[
+            { label: "Add Student", icon: "👤", color: "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400", href: "/addStudent" },
+            { label: "View Students", icon: "👥", color: "bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400", href: "/students" },
+            { label: "Attendance", icon: "📋", color: "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400", href: "/attendance" },
+            { label: "Fee Records", icon: "💰", color: "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400", href: "/fees" },
+            { label: "Courses", icon: "📚", color: "bg-teal-50 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400", href: "/courses" },
+            { label: "Face Register", icon: "🤖", color: "bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400", href: "/face-registration" },
+          ].map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
+              className={`flex flex-col items-center gap-3 p-5 rounded-2xl ${item.color} border border-current/10 hover:scale-[1.03] active:scale-[0.98] transition-transform cursor-pointer`}
+            >
+              <div className="text-3xl">{item.icon}</div>
+              <span className="text-xs font-black tracking-tight text-center leading-tight">{item.label}</span>
+            </a>
+          ))}
+        </div>
+      </motion.div>
+
+    </div>
   );
 }
 

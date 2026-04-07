@@ -9,7 +9,16 @@ const adminSchema = new mongoose.Schema({
   unique:true
  },
 
- password:String
+ password:String,
+ 
+ isVerified: {
+  type: Boolean,
+  default: false
+ },
+ 
+ otp: String,
+ 
+ otpExpires: Date
 
 });
 

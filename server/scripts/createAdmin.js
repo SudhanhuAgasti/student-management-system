@@ -21,7 +21,8 @@ const createDefaultAdmin = async () => {
     const admin = new Admin({
       email,
       password: hashedPassword,
-      name: "Super Admin"
+      name: "Super Admin",
+      isVerified: true
     });
 
     await admin.save();

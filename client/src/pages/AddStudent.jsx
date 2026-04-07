@@ -6,6 +6,7 @@ function AddStudent() {
   const [student, setStudent] = useState({
     name: "",
     phone: "",
+    rollNumber: "",
     course: "",
     totalFees: ""
   });
@@ -35,9 +36,13 @@ function AddStudent() {
     setIsLoading(true);
     setStatus({ message: "", type: "" });
     try {
-      await API.post("/addStudent", student);
-      setStatus({ message: "Student added successfully!", type: "success" });
-      setStudent({ name: "", phone: "", course: "", totalFees: "" });
+      const res = await API.post("/addStudent", student);
+      setStatus({
+        message: "Student added successfully! Now register their face data.",
+        type: "success",
+        showFaceBtn: true
+      });
+      setStudent({ name: "", phone: "", rollNumber: "", course: "", totalFees: "" });
     } catch (err) {
       console.error(err);
       setStatus({ message: err.response?.data?.message || "Failed to add student.", type: "error" });
@@ -50,102 +55,120 @@ function AddStudent() {
     <div className="max-w-3xl mx-auto space-y-6">
 
       <div>
-        <h1 className="text-3xl font-bold text-slate-800 flex items-center gap-2">
-          <UserPlus className="text-indigo-600" size={28} />
+        <h1 className="text-4xl font-black text-slate-900 dark:text-white flex items-center gap-4 tracking-tighter">
+          <div className="p-3 bg-indigo-500/10 dark:bg-indigo-500/20 rounded-2xl">
+            <UserPlus className="text-indigo-600 dark:text-indigo-400" size={32} />
+          </div>
           Add New Student
         </h1>
-        <p className="text-slate-500 mt-1">Fill in the details below to enroll a new student.</p>
+        <p className="text-slate-500 dark:text-slate-400 mt-3 text-lg font-medium tracking-wide">Fill in the details below to enroll a new member into the institution.</p>
       </div>
 
-      <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200">
+      <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-8 md:p-12 shadow-2xl border border-slate-100 dark:border-slate-700 transition-colors">
         <form onSubmit={addStudent} className="space-y-6">
 
           {status.message && (
-            <div className={`p-4 rounded-xl flex items-center gap-3 text-sm font-semibold ${status.type === "success" ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-red-50 text-red-700 border border-red-100"}`}>
-              {status.type === "success" && <CheckCircle2 size={20} className="text-emerald-500" />}
-              {status.message}
+            <div className={`p-4 rounded-xl flex flex-col gap-3 text-sm font-semibold ${status.type === "success" ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-red-50 text-red-700 border border-red-100"}`}>
+              <div className="flex items-center gap-3">
+                {status.type === "success" && <CheckCircle2 size={20} className="text-emerald-500" />}
+                {status.message}
+              </div>
+              {status.showFaceBtn && (
+                <button
+                  type="button"
+                  onClick={() => window.location.href = "/face-registration"}
+                  className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors w-fit"
+                >
+                  Go to Face Registration
+                </button>
+              )}
             </div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700">Full Name</label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <div className="space-y-3">
+              <label className="text-sm font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest ml-1">Full Name</label>
+              <div className="relative group">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
                 <input
                   name="name"
                   value={student.name}
                   required
                   placeholder="e.g. John Doe"
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all text-slate-800"
+                  className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-950 transition-all text-slate-800 dark:text-white font-bold"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700">Phone Number</label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <div className="space-y-3">
+              <label className="text-sm font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest ml-1">Phone Number</label>
+              <div className="relative group">
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
                 <input
                   name="phone"
                   value={student.phone}
                   required
-                  placeholder="+1 (555) 000-0000"
+                  placeholder="+91 0000 0000"
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all text-slate-800"
+                  className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-950 transition-all text-slate-800 dark:text-white font-bold"
                 />
               </div>
             </div>
 
-            <div className="space-y-2 md:col-span-2">
-              <label className="text-sm font-semibold text-slate-700">Assign Course</label>
-              <div className="relative">
-                <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                <select
-                  name="course"
-                  value={student.course}
+            <div className="space-y-3 md:col-span-2">
+              <label className="text-sm font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest ml-1">Roll Number</label>
+              <div className="relative group">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-black text-[10px] group-focus-within:text-indigo-500 transition-colors uppercase tracking-widest">UID</div>
+                <input
+                  name="rollNumber"
+                  value={student.rollNumber}
                   required
+                  placeholder="e.g. CS2024001"
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all text-slate-800 appearance-none"
-                >
-                  <option value="">Select a course</option>
-                  {courses.map(c => (
-                    <option key={c._id} value={c.name}>{c.name}</option>
-                  ))}
-                  {!courses.find(c => ["MCA", "MBA", "M-TECH", "B-TECH"].includes(c.name)) && (
-                    <>
-                      <option value="MCA">MCA</option>
-                      <option value="MBA">MBA</option>
-                      <option value="M-TECH">M-TECH</option>
-                      <option value="B-TECH">B-TECH</option>
-                    </>
-                  )}
-                </select>
-              </div>
-              <div className="flex flex-wrap gap-2 mt-3">
-                {["MCA", "MBA", "M-TECH", "B-TECH"].map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => setStudent({ ...student, course: c })}
-                    className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                      student.course === c 
-                        ? "bg-indigo-600 text-white" 
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                    }`}
-                  >
-                    + {c}
-                  </button>
-                ))}
+                  className="w-full pl-14 pr-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-950 transition-all text-slate-800 dark:text-white font-bold"
+                />
               </div>
             </div>
 
-            <div className="space-y-2 md:col-span-2">
-              <label className="text-sm font-semibold text-slate-700">Total Fees (₹)</label>
-              <div className="relative">
-                <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <div className="space-y-3 md:col-span-2">
+              <label className="text-sm font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest ml-1">Assign Program</label>
+              <div className="relative group">
+                <BookOpen className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
+                <select className="w-full pl-12 pr-6 py-4 
+bg-slate-50 dark:bg-slate-900 
+border border-slate-300 dark:border-slate-700 
+rounded-2xl 
+overflow-hidden
+shadow-sm 
+hover:border-indigo-500 hover:shadow-lg 
+focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 
+transition duration-300 ease-in-out 
+text-slate-800 dark:text-white font-semibold 
+appearance-none cursor-pointer"
+                >
+                  <option value="">📚 Select a course</option>
+
+
+                  <option value="MBA">🎓 MBA • Business</option>
+                  <option value="MCA">💻 MCA • Computer Applications</option>
+                  <option value="M-TECH">🛠️ M-TECH • Engineering</option>
+                  <option value="B-TECH">⚙️ B-TECH • Technology</option>
+                  <option value="DIPLOMA">📘 DIPLOMA • Technical</option>
+
+
+                  {courses.map(c => (
+                    <option key={c._id} value={c.name}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="space-y-3 md:col-span-2">
+              <label className="text-sm font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest ml-1">Tuition Fees (₹)</label>
+              <div className="relative group">
+                <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
                 <input
                   type="number"
                   name="totalFees"
@@ -153,7 +176,7 @@ function AddStudent() {
                   required
                   placeholder="Amount in INR"
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all text-slate-800"
+                  className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-950 transition-all text-slate-800 dark:text-white font-black text-xl"
                 />
               </div>
             </div>
