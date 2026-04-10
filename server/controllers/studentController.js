@@ -2,12 +2,16 @@ const Student = require("../models/Student");
 
 exports.addStudent = async (req, res, next) => {
   try {
-    const adminId = req.admin.id;
-    const student = new Student({ ...req.body, adminId });
+    const adminId = req.user.id;
+    // Generate a unique 6-digit key for student registration
+    const admissionKey = "STU" + Math.floor(1000 + Math.random() * 9000).toString();
+    
+    const student = new Student({ ...req.body, adminId, admissionKey });
     await student.save();
 
     res.status(201).json({
-      message: "Student Added Successfully"
+      message: "Student Added Successfully",
+      admissionKey: admissionKey // Return this so admin can give it to student
     });
   } catch (err) {
     next(err);
@@ -16,7 +20,7 @@ exports.addStudent = async (req, res, next) => {
 
 exports.getStudents = async (req, res, next) => {
   try {
-    const adminId = req.admin.id;
+    const adminId = req.user.id;
     const students = await Student.find({ adminId });
     res.json(students);
   } catch (err) {
@@ -26,7 +30,7 @@ exports.getStudents = async (req, res, next) => {
 
 exports.deleteStudent = async (req, res, next) => {
   try {
-    const adminId = req.admin.id;
+    const adminId = req.user.id;
     const student = await Student.findOneAndDelete({ _id: req.params.id, adminId });
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
@@ -41,7 +45,7 @@ exports.deleteStudent = async (req, res, next) => {
 
 exports.updateStudent = async (req, res, next) => {
   try {
-    const adminId = req.admin.id;
+    const adminId = req.user.id;
     const student = await Student.findOneAndUpdate(
       { _id: req.params.id, adminId },
       req.body,
@@ -63,7 +67,7 @@ exports.registerFace = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { embedding } = req.body;
-    const adminId = req.admin.id;
+    const adminId = req.user.id;
 
     if (!embedding || !Array.isArray(embedding)) {
       return res.status(400).json({ message: "Invalid embedding data" });

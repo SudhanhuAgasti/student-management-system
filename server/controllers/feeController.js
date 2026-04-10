@@ -4,7 +4,7 @@ const nodemailer = require("nodemailer");
 
 exports.payFees = async (req, res, next) => {
   try {
-    const adminId = req.admin.id;
+    const adminId = req.user.id;
     const fee = new Fee({ ...req.body, adminId });
     await fee.save();
 
@@ -27,7 +27,7 @@ exports.payFees = async (req, res, next) => {
 
 exports.getFees = async (req, res, next) => {
   try {
-    const adminId = req.admin.id;
+    const adminId = req.user.id;
     const data = await Fee.find({ adminId }).populate("studentId");
     res.json(data);
   } catch (err) {
@@ -37,7 +37,7 @@ exports.getFees = async (req, res, next) => {
 
 exports.sendFeeReminders = async (req, res, next) => {
   try {
-    const adminId = req.admin.id;
+    const adminId = req.user.id;
     const Student = require("../models/Student");
     
     // Find students with pending fees
@@ -47,78 +47,49 @@ exports.sendFeeReminders = async (req, res, next) => {
     });
 
     if (studentsWithPending.length === 0) {
-      return res.json({ message: "No students with pending fees found." });
+      return res.json({ 
+        message: "No students with pending fees found.",
+        defaulters: []
+      });
     }
 
-    // Connect to Nodemailer to send real email to the Admin
-    let emailSent = false;
-    try {
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS
-        }
-      });
+    const defaulters = studentsWithPending.map(student => {
+      const pendingAmount = student.totalFees - student.feesPaid;
+      const message =`🎓 *Educore Institute Update*
 
-      // Generate HTML list of students with WhatsApp quick links
-      let studentsHtml = `<table border="1" cellpadding="10" style="border-collapse: collapse; width: 100%;">
-        <tr style="background-color: #f8fafc;">
-          <th>Name</th>
-          <th>Course</th>
-          <th>Due Amount</th>
-          <th>Quick Action</th>
-        </tr>`;
+Dear ${student.name},
 
-      studentsWithPending.forEach(student => {
-        const pendingAmount = student.totalFees - student.feesPaid;
-        const msg = encodeURIComponent(`Hello ${student.name}, this is a gentle reminder from ${req.admin.name || "Administration"} regarding your pending fees of Rs ${pendingAmount} for the ${student.course} course. Please clear your dues.`);
-        
-        studentsHtml += `
-          <tr>
-            <td><strong>${student.name}</strong><br/><small>${student.phone || "No phone"}</small></td>
-            <td>${student.course || "N/A"}</td>
-            <td style="color: #e11d48; font-weight: bold;">₹${pendingAmount}</td>
-            <td><a href="https://wa.me/${student.phone}?text=${msg}" style="display: inline-block; padding: 6px 12px; background-color: #10b981; color: white; text-decoration: none; border-radius: 4px;">WhatsApp Student</a></td>
-          </tr>
-        `;
-      });
-      studentsHtml += `</table>`;
+We truly appreciate your commitment to your *${student.course || "enrolled"}* course. This is a friendly note to let you know that a small balance is still pending on your account.
 
-      const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: req.admin.email, // Send to the logged-in Admin's verified email Address
-        subject: `Fee Defaulter Report - ${new Date().toLocaleDateString()}`,
-        html: `
-          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2>Action Required: Fee Reminders</h2>
-            <p>Hello <b>${req.admin.name || "Admin"}</b>,</p>
-            <p>You have triggered the bulk reminder system for your institution.</p>
-            <p>Currently, there are <strong>${studentsWithPending.length}</strong> students with outstanding balances. You can review the list below and use the "WhatsApp Student" links to dispatch quick reminders securely.</p>
-            <br/>
-            ${studentsHtml}
-            <br/>
-            <p>Regards,<br/>EduCore Automation System</p>
-          </div>
-        `,
+*Here’s a quick overview:*
+
+* Total Fee: ₹${student.totalFees}
+* Amount Paid: ₹${student.feesPaid}
+* *Remaining Balance: ₹${pendingAmount}*
+
+We kindly request you to clear the dues at your convenience so you can continue your learning journey without any interruptions.
+
+Thank you for being a valued part of Educore! 🌟
+
+Best regards,
+*Educore Administration*`
+;
+      
+      return {
+        _id: student._id,
+        name: student.name,
+        phone: student.phone,
+        course: student.course,
+        pendingAmount,
+        whatsappUrl: `https://wa.me/${student.phone}?text=${encodeURIComponent(message)}`
       };
-
-      if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-        await transporter.sendMail(mailOptions);
-        emailSent = true;
-      } else {
-        console.log(`[DEBUG MAIL] Email not setup. Content: ${studentsHtml}`);
-      }
-    } catch (emailErr) {
-      console.error("Error sending reminder report: ", emailErr);
-    }
+    });
 
     res.json({
-      message: emailSent ? `Report dispatched to ${req.admin.email}` : "Report generated locally (no email env configured)",
-      count: studentsWithPending.length
+      message: `${defaulters.length} defaulters identified.`,
+      defaulters
     });
   } catch (err) {
-
     next(err);
   }
 };

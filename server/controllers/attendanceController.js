@@ -19,7 +19,7 @@ const getCachedStudents = async (adminId) => {
 };
 
 exports.markAttendance = async (req, res) => {
-  const adminId = req.admin.id;
+  const adminId = req.user.id;
   const { studentId, date, status } = req.body;
 
   const exists = await Attendance.findOne({ adminId, studentId, date });
@@ -35,7 +35,7 @@ exports.markAttendance = async (req, res) => {
 };
 
 exports.getAttendance = async (req, res) => {
-  const adminId = req.admin.id;
+  const adminId = req.user.id;
   const { date } = req.query;
 
   const query = date ? { adminId, date } : { adminId };
@@ -45,7 +45,7 @@ exports.getAttendance = async (req, res) => {
 };
 
 exports.getStats = async (req, res) => {
-  const adminId = new mongoose.Types.ObjectId(req.admin.id);
+  const adminId = new mongoose.Types.ObjectId(req.user.id);
 
   const stats = await Attendance.aggregate([
     { $match: { adminId } },
@@ -87,7 +87,7 @@ exports.getStats = async (req, res) => {
 
 exports.autoAbsent = async (req, res) => {
   try {
-    const adminId = req.admin.id;
+    const adminId = req.user.id;
     const students = await Student.find({ adminId });
     const today = new Date().toISOString().split("T")[0];
 
@@ -116,7 +116,7 @@ exports.autoAbsent = async (req, res) => {
 
 exports.recognizeAndMarkAttendance = async (req, res) => {
   try {
-    const adminId = req.admin.id;
+    const adminId = req.user.id;
     const { embedding } = req.body;
     const date = new Date().toISOString().split("T")[0];
 

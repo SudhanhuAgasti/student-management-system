@@ -1,9 +1,13 @@
 const mongoose = require("mongoose");
 
 const studentSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
+  },
   adminId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Admin",
+    ref: "User",
     required: true
   },
 
@@ -40,6 +44,11 @@ const studentSchema = new mongoose.Schema({
   faceEmbedding: {
     type: [[Number]],
     default: []
+  },
+  admissionKey: {
+    type: String,
+    unique: true,
+    sparse: true
   }
 });
 

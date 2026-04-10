@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
 import { motion, AnimatePresence } from "framer-motion";
+import StudentDashboard from "../components/StudentDashboard";
+import TeacherDashboard from "../components/TeacherDashboard";
 import {
   Users, ClipboardCheck, IndianRupee, TrendingDown,
   BellRing, CheckCircle2, AlertCircle, BookOpen,
-  BarChart3, PieChart, ArrowUpRight, Sparkles
+  BarChart3, PieChart, ArrowUpRight, Sparkles, Phone
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -67,21 +69,50 @@ function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [reminderStatus, setReminderStatus] = useState(null);
   const [isSending, setIsSending] = useState(false);
+  const [defaulters, setDefaulters] = useState([]);
+  const [showDefaultersModal, setShowDefaultersModal] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
     API.get("/dashboard")
-      .then(res => { setData(res.data); setIsLoading(false); })
+      .then(res => { 
+        setData(res.data); 
+        setIsLoading(false); 
+      })
       .catch(() => setIsLoading(false));
   }, []);
 
+  if (isLoading) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
+        <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+        <p className="font-bold text-slate-400 animate-pulse uppercase tracking-widest text-xs">Loading Dashboard...</p>
+      </div>
+    );
+  }
+
+  // Render Role-Specific Dashboards
+  if (data.role === "student") {
+    return <StudentDashboard data={data} />;
+  }
+
+  if (data.role === "teacher") {
+    return <TeacherDashboard data={data} />;
+  }
+
+  // Default: Admin Dashboard
   const handleSendReminders = async () => {
     setIsSending(true);
     try {
       const res = await API.post("/fees/reminders");
-      setReminderStatus({ type: "success", message: res.data.message });
+      if (res.data.defaulters && res.data.defaulters.length > 0) {
+        setDefaulters(res.data.defaulters);
+        setShowDefaultersModal(true);
+      } else {
+        setReminderStatus({ type: "success", message: res.data.message });
+      }
     } catch {
-      setReminderStatus({ type: "error", message: "Could not send reminders." });
+      setReminderStatus({ type: "error", message: "Could not fetch defaulters." });
     } finally {
       setIsSending(false);
       setTimeout(() => setReminderStatus(null), 5000);
@@ -108,7 +139,7 @@ function Dashboard() {
   return (
     <div className="space-y-8 pb-12">
 
-      {/* Toast */}
+     
       <AnimatePresence>
         {reminderStatus && (
           <motion.div
@@ -132,7 +163,7 @@ function Dashboard() {
         )}
       </AnimatePresence>
 
-      {/* ── Header ── */}
+    
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <p className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
@@ -148,14 +179,21 @@ function Dashboard() {
             Here's what's happening at your institute today.
           </p>
         </div>
-        <div className="flex items-center gap-2 bg-white dark:bg-[#111827] border border-slate-100 dark:border-slate-800 rounded-2xl p-1.5 shadow-sm">
-          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-          <span className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest pr-2">Live Data</span>
+        <div className="flex flex-col items-end gap-3">
+          <div className="flex items-center gap-2 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/30 rounded-2xl p-3 shadow-sm">
+            <div className="bg-indigo-500 text-white rounded-lg px-2.5 py-1 text-xs font-black tracking-widest">CODE</div>
+            <span className="text-lg font-black text-indigo-700 dark:text-indigo-400 tracking-widest uppercase">{data.instituteCode || "N/A"}</span>
+          </div>
+          <div className="flex items-center gap-2 bg-white dark:bg-[#111827] border border-slate-100 dark:border-slate-800 rounded-2xl p-1.5 shadow-sm">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest pr-2">Live Data</span>
+          </div>
         </div>
       </div>
 
-      {/* ── Stat Cards ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+     
+      {/* ── Stat Overview ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           icon={<Users size={22} />}
           label="Total Students"
@@ -184,7 +222,7 @@ function Dashboard() {
         />
       </div>
 
-      {/* ── Financial Summary Band ── */}
+     
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
@@ -192,7 +230,7 @@ function Dashboard() {
         className="bg-white dark:bg-[#111827] rounded-3xl p-6 sm:p-8 border border-slate-100 dark:border-slate-800 shadow-sm"
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-          {/* Left: Revenue split */}
+         
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-500/20">
@@ -204,7 +242,7 @@ function Dashboard() {
               </div>
             </div>
 
-            {/* Progress Bar */}
+           
             <div className="space-y-2">
               <div className="flex justify-between items-center text-sm">
                 <span className="font-bold text-emerald-600 dark:text-emerald-400">Collected — ₹{totalRevenue.toLocaleString()}</span>
@@ -225,7 +263,7 @@ function Dashboard() {
             </div>
           </div>
 
-          {/* Right: Send Reminders Button */}
+          {/*  Right: Send Reminders Button  */}
           <div className="sm:border-l border-slate-100 dark:border-slate-800 sm:pl-8 shrink-0">
             <p className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">
               {data.totalPendingFees > 0 ? "Action Needed" : "All Clear"}
@@ -394,7 +432,7 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           {[
             { label: "Add Student", icon: "👤", color: "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400", href: "/addStudent" },
             { label: "View Students", icon: "👥", color: "bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400", href: "/students" },
@@ -414,6 +452,67 @@ function Dashboard() {
           ))}
         </div>
       </motion.div>
+
+      {/* ── Defaulters Modal ── */}
+      <AnimatePresence>
+        {showDefaultersModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-[2.5rem] p-8 shadow-2xl border border-slate-100 dark:border-slate-800"
+            >
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h2 className="text-2xl font-black text-slate-900 dark:text-white">Fee Defaulters</h2>
+                  <p className="text-sm text-slate-500 font-medium">Click on WhatsApp to send a direct reminder.</p>
+                </div>
+                <button 
+                  onClick={() => setShowDefaultersModal(false)}
+                  className="p-3 bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full transition-colors"
+                >
+                  <AlertCircle size={20} className="rotate-45" />
+                </button>
+              </div>
+
+              <div className="max-h-[50vh] overflow-y-auto space-y-3 pr-2 custom-scrollbar">
+                {defaulters.map((item) => (
+                  <div key={item._id} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 group hover:border-indigo-500/30 transition-all">
+                    <div className="flex-1">
+                      <p className="font-bold text-slate-900 dark:text-white">{item.name}</p>
+                      <p className="text-xs text-slate-500 font-medium">{item.course} · {item.phone}</p>
+                    </div>
+                    <div className="text-right flex items-center gap-4">
+                      <div>
+                        <p className="text-xs font-black text-rose-500 uppercase tracking-widest">Due</p>
+                        <p className="font-black text-slate-900 dark:text-white">₹{item.pendingAmount.toLocaleString()}</p>
+                      </div>
+                      <a
+                        href={item.whatsappUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="p-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl shadow-lg shadow-emerald-500/20 transition-all"
+                      >
+                        <Phone size={18} />
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                <button
+                  onClick={() => setShowDefaultersModal(false)}
+                  className="px-8 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-black text-sm hover:opacity-90 transition-opacity"
+                >
+                  Done
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
     </div>
   );

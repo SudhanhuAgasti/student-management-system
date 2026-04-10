@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 
 exports.addCourse = async (req, res, next) => {
   try {
-    const adminId = req.admin.id;
+    const adminId = req.user.id;
     const course = new Course({ ...req.body, adminId });
     await course.save();
     res.json({
@@ -16,7 +16,7 @@ exports.addCourse = async (req, res, next) => {
 
 exports.getCourses = async (req, res, next) => {
   try {
-    const adminId = req.admin.id;
+    const adminId = req.user.id;
     const adminObjectId = new mongoose.Types.ObjectId(adminId);
     const courses = await Course.find({ adminId }).lean();
 
@@ -53,7 +53,7 @@ exports.getCourses = async (req, res, next) => {
 
 exports.deleteCourse = async (req, res, next) => {
   try {
-    const adminId = req.admin.id;
+    const adminId = req.user.id;
     const course = await Course.findOneAndDelete({ _id: req.params.id, adminId });
     if (!course) {
       return res.status(404).json({ message: "Course not found" });

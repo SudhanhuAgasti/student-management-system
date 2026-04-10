@@ -21,9 +21,16 @@ function AddStudent() {
   }, []);
 
   const handleChange = (e) => {
-    setStudent({
-      ...student,
-      [e.target.name]: e.target.value
+    const { name, value } = e.target;
+    setStudent(prev => {
+      const updated = { ...prev, [name]: value };
+      if (name === "course") {
+        const selectedCourse = courses.find(c => c.name === value);
+        if (selectedCourse) {
+          updated.totalFees = selectedCourse.fees;
+        }
+      }
+      return updated;
     });
   };
 
@@ -136,7 +143,11 @@ function AddStudent() {
               <label className="text-sm font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest ml-1">Assign Program</label>
               <div className="relative group">
                 <BookOpen className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
-                <select className="w-full pl-12 pr-6 py-4 
+                <select 
+                  name="course"
+                  value={student.course}
+                  onChange={handleChange}
+                  className="w-full pl-12 pr-6 py-4 
 bg-slate-50 dark:bg-slate-900 
 border border-slate-300 dark:border-slate-700 
 rounded-2xl 

@@ -10,7 +10,8 @@ import {
   CreditCard,
   LogOut,
   Moon,
-  Sun
+  Sun,
+  Presentation
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -31,8 +32,9 @@ const linkVariants = {
 
 function Sidebar({ onCloseMobile }) {
   const location = useLocation();
-  const adminName = localStorage.getItem("adminName") || "Admin";
-  const adminEmail = localStorage.getItem("adminEmail") || "";
+  const userName = localStorage.getItem("userName") || "User";
+  const userEmail = localStorage.getItem("userEmail") || "";
+  const userRole = localStorage.getItem("userRole") || "admin";
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("theme") === "dark" || 
       (!localStorage.getItem("theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
@@ -49,19 +51,26 @@ function Sidebar({ onCloseMobile }) {
   }, [isDarkMode]);
 
   const navLinks = [
-    { name: "Dashboard", path: "/", icon: <LayoutDashboard size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
-    { name: "Students", path: "/students", icon: <Users size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
-    { name: "Add Student", path: "/addStudent", icon: <UserPlus size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
-    { name: "Attendance", path: "/attendance", icon: <ScanFace size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
-    { name: "Face Enrollment", path: "/face-registration", icon: <UserPlus size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
-    { name: "Courses", path: "/courses", icon: <BookOpen size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
-    { name: "Fees", path: "/fees", icon: <CreditCard size={22} className="opacity-90 transition-transform group-hover:scale-110" /> },
+    { name: "Dashboard", path: "/", icon: <LayoutDashboard size={22} className="opacity-90 transition-transform group-hover:scale-110" />, roles: ["admin", "teacher", "student"] },
+    { name: "My Classes", path: "/teacher-classes", icon: <BookOpen size={22} className="opacity-90 transition-transform group-hover:scale-110" />, roles: ["teacher"] },
+    { name: "Class Notes", path: "/teacher-notes", icon: <Presentation size={22} className="opacity-90 transition-transform group-hover:scale-110" />, roles: ["teacher"] },
+    { name: "Study Center", path: "/my-content", icon: <BookOpen size={22} className="opacity-90 transition-transform group-hover:scale-110" />, roles: ["student"] },
+    { name: "Teacher Insights", path: "/admin-teacher-classes", icon: <Presentation size={22} className="opacity-90 transition-transform group-hover:scale-110" />, roles: ["admin"] },
+    { name: "Students", path: "/students", icon: <Users size={22} className="opacity-90 transition-transform group-hover:scale-110" />, roles: ["admin"] },
+    { name: "Add Student", path: "/addStudent", icon: <UserPlus size={22} className="opacity-90 transition-transform group-hover:scale-110" />, roles: ["admin"] },
+    { name: "Attendance Admin", path: "/attendance", icon: <ScanFace size={22} className="opacity-90 transition-transform group-hover:scale-110" />, roles: ["admin"] },
+    { name: "Face Enrollment", path: "/face-registration", icon: <UserPlus size={22} className="opacity-90 transition-transform group-hover:scale-110" />, roles: ["admin"] },
+    { name: "Manage Courses", path: "/courses", icon: <BookOpen size={22} className="opacity-90 transition-transform group-hover:scale-110" />, roles: ["admin"] },
+    { name: "Manage Fees", path: "/fees", icon: <CreditCard size={22} className="opacity-90 transition-transform group-hover:scale-110" />, roles: ["admin"] },
   ];
+
+  const filteredLinks = navLinks.filter(link => link.roles.includes(userRole));
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("adminName");
-    localStorage.removeItem("adminEmail");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userRole");
     window.location.href = "/login";
   };
 
@@ -78,19 +87,19 @@ function Sidebar({ onCloseMobile }) {
           <h2 className="text-2xl font-black tracking-tight text-white">
             Edu<span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-purple-400">Core</span>
           </h2>
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5 block">Admin Portal</span>
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5 block">{userRole.charAt(0).toUpperCase() + userRole.slice(1)} Portal</span>
         </div>
       </div>
 
-      {/* Admin Identity Badge */}
+      {/* User Identity Badge */}
       <div className="px-6 py-4 mx-4 mb-2 rounded-2xl bg-white/5 border border-white/10">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-lg">
-            {adminName ? adminName.charAt(0).toUpperCase() : "A"}
+            {userName ? userName.charAt(0).toUpperCase() : "U"}
           </div>
           <div className="overflow-hidden">
-            <p className="text-sm font-bold text-white truncate">{adminName || "Admin"}</p>
-            <p className="text-xs text-slate-500 truncate">{adminEmail}</p>
+            <p className="text-sm font-bold text-white truncate">{userName || "User"}</p>
+            <p className="text-xs text-slate-500 truncate">{userEmail}</p>
           </div>
         </div>
       </div>
@@ -101,7 +110,7 @@ function Sidebar({ onCloseMobile }) {
         animate="show"
         className="flex-1 overflow-y-auto py-8 px-5 space-y-2 relative z-10 scrollbar-hide"
       >
-        {navLinks.map((link) => {
+        {filteredLinks.map((link) => {
           const isActive = location.pathname === link.path;
           return (
             <motion.div variants={linkVariants} key={link.name}>

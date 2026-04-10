@@ -13,6 +13,10 @@ import Fees from "./pages/Fees";
 import Courses from "./pages/Courses";
 import Attendance from "./pages/Attendance";
 import FaceRegistration from "./pages/FaceRegistration";
+import TeacherClasses from "./pages/TeacherClasses";
+import TeacherNotes from "./pages/TeacherNotes";
+import AdminTeacherClasses from "./pages/AdminTeacherClasses";
+import StudentContent from "./pages/StudentContent";
 import PageTransition from "./components/PageTransition";
 import { AnimatePresence } from "framer-motion";
 
@@ -75,14 +79,24 @@ function AppContent() {
             <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
             <Route path="/register" element={<PageTransition><Register /></PageTransition>} />
             
-            <Route element={<ProtectedRoute />}>
+            <Route element={<ProtectedRoute allowedRoles={["admin", "teacher", "student"]} />}>
               <Route path="/" element={<PageTransition><Dashboard /></PageTransition>} />
+              <Route path="/my-content" element={<PageTransition><StudentContent /></PageTransition>} />
+            </Route>
+
+            <Route element={<ProtectedRoute allowedRoles={["teacher"]} />}>
+              <Route path="/teacher-classes" element={<PageTransition><TeacherClasses /></PageTransition>} />
+              <Route path="/teacher-notes" element={<PageTransition><TeacherNotes /></PageTransition>} />
+            </Route>
+
+            <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+              <Route path="/admin-teacher-classes" element={<PageTransition><AdminTeacherClasses /></PageTransition>} />
               <Route path="/students" element={<PageTransition><Students /></PageTransition>} />
+              <Route path="/face-registration" element={<PageTransition><FaceRegistration /></PageTransition>} />
               <Route path="/addStudent" element={<PageTransition><AddStudent /></PageTransition>} />
+              <Route path="/attendance" element={<PageTransition><Attendance /></PageTransition>} />
               <Route path="/courses" element={<PageTransition><Courses /></PageTransition>} />
               <Route path="/fees" element={<PageTransition><Fees /></PageTransition>} />
-              <Route path="/attendance" element={<PageTransition><Attendance /></PageTransition>} />
-              <Route path="/face-registration" element={<PageTransition><FaceRegistration /></PageTransition>} />
             </Route>
           </Routes>
         </AnimatePresence>

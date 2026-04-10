@@ -71,17 +71,17 @@ function Fees() {
           <p className="text-slate-500 dark:text-slate-400 mt-2 text-lg font-medium tracking-wide">Monitor collections, dispatch reminders, and audit institutional logs.</p>
         </div>
 
-        <div className="flex items-center bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl p-2 rounded-4xl shadow-xl border border-slate-200/60 dark:border-slate-700/60">
+        <div className="flex flex-wrap items-center bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl p-2 rounded-2xl md:rounded-4xl shadow-xl border border-slate-200/60 dark:border-slate-700/60 w-full md:w-auto">
           <button
             onClick={() => setActiveTab("pending")}
-            className={`px-8 py-3 rounded-2xl font-black text-sm transition-all duration-300 flex items-center gap-2 ${activeTab === 'pending' ? 'bg-red-500 text-white shadow-lg shadow-red-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
+            className={`flex-1 md:flex-none px-4 md:px-8 py-3 rounded-xl md:rounded-2xl font-black text-xs md:text-sm transition-all duration-300 flex items-center justify-center gap-2 ${activeTab === 'pending' ? 'bg-red-500 text-white shadow-lg shadow-red-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
           >
             <AlertCircle size={18} />
             Defaulters ({pendingStudents.length})
           </button>
           <button
             onClick={() => setActiveTab("transactions")}
-            className={`px-8 py-3 rounded-2xl font-black text-sm transition-all duration-300 flex items-center gap-2 ${activeTab === 'transactions' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
+            className={`flex-1 md:flex-none px-4 md:px-8 py-3 rounded-xl md:rounded-2xl font-black text-xs md:text-sm transition-all duration-300 flex items-center justify-center gap-2 ${activeTab === 'transactions' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
           >
             <CreditCard size={18} />
             Ledger
@@ -154,8 +154,8 @@ function Fees() {
             )}
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-3xl bg-white/40">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto rounded-3xl bg-white/40 custom-scrollbar-hide">
+            <table className="w-full text-left border-collapse min-w-[700px]">
               <thead>
                 <tr className="border-b border-slate-200/60 bg-white/50">
                   <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest">Student Information</th>

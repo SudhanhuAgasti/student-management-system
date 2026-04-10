@@ -1,0 +1,35 @@
+[
+  {
+    "_id": "69d89678dfe70eba0d0f0cda",
+    "name": "ADMINNNNNNNNNNN",
+    "email": "admin@gmail.com",
+    "password": "$2b$10$r0sTwsPTU2gQqv.So3AFmeUhs6p7uxFV5lcxobwGueIUtMG22Tz7C",
+    "role": "admin",
+    "instituteCode": "EDU5418",
+    "adminRef": null,
+    "isVerified": true,
+    "__v": 0
+  },
+  {
+    "_id": "69d89938dfe70eba0d0f0d51",
+    "name": "TEACHER",
+    "email": "teacher@gmail.com",
+    "password": "$2b$10$7IdRS4C9HnvS5ec1awDL4Of7AV3Ug6XJqNbvzt3F3szDWt.9EflqO",
+    "role": "teacher",
+    "adminRef": "69d89678dfe70eba0d0f0cda",
+    "isVerified": true,
+    "__v": 0
+  },
+  {
+    "_id": "69d8a284166e0b2158dec2ad",
+    "name": "TEACHER1",
+    "email": "teacher1@gmail.com",
+    "password": "$2b$10$YQpHiAErVdRKyJeyvug/8eaImWBCEvNmj/PPhqqZhpP8tapntN1sG",
+    "role": "teacher",
+    "adminRef": "69d89678dfe70eba0d0f0cda",
+    "salary": 0,
+    "paidAmount": 0,
+    "isVerified": true,
+    "__v": 0
+  }
+]

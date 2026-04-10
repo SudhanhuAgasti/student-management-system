@@ -21,8 +21,11 @@ const cardVariants = {
 function Courses() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newCourse, setNewCourse] = useState({ name: "", fees: "", duration: "" });
 
-  useEffect(() => {
+  const fetchCourses = () => {
+    setLoading(true);
     API.get("/courses")
       .then((res) => {
         setCourses(res.data);
@@ -32,18 +35,105 @@ function Courses() {
         console.error("Failed to fetch courses", err);
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchCourses();
   }, []);
+
+  const handleAddCourse = async (e) => {
+    e.preventDefault();
+    try {
+      await API.post("/addCourse", newCourse);
+      setShowAddModal(false);
+      setNewCourse({ name: "", fees: "", duration: "" });
+      fetchCourses();
+    } catch (err) {
+      console.error("Failed to add course", err);
+      alert(err.response?.data?.message || "Failed to add course");
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       
-      <div>
-        <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-orange-500 to-pink-500 flex items-center gap-3 tracking-tight">
-          <BookOpen className="text-orange-500" size={36} />
-          Offered Courses
-        </h1>
-        <p className="text-slate-500 mt-2 text-lg">Manage and view all the academic courses currently available.</p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-orange-500 to-pink-500 flex items-center gap-3 tracking-tight">
+            <BookOpen className="text-orange-500" size={36} />
+            Offered Courses
+          </h1>
+          <p className="text-slate-500 mt-2 text-lg">Manage and view all the academic courses currently available.</p>
+        </div>
+        <button 
+          onClick={() => setShowAddModal(true)}
+          className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-orange-500/20 transition-all flex items-center justify-center gap-2 w-full md:w-auto"
+        >
+          <Sparkles size={20} /> Add New Course
+        </button>
       </div>
+
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white dark:bg-slate-900 w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl border border-slate-100 dark:border-slate-800"
+          >
+            <h2 className="text-2xl font-black text-slate-800 dark:text-white mb-6">Create New Course</h2>
+            <form onSubmit={handleAddCourse} className="space-y-5">
+              <div className="space-y-2">
+                <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Course Name</label>
+                <input
+                  required
+                  value={newCourse.name}
+                  onChange={(e) => setNewCourse({...newCourse, name: e.target.value})}
+                  placeholder="e.g. Full Stack Development"
+                  className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all font-bold dark:text-white"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Fees (₹)</label>
+                  <input
+                    required
+                    type="number"
+                    value={newCourse.fees}
+                    onChange={(e) => setNewCourse({...newCourse, fees: e.target.value})}
+                    placeholder="50000"
+                    className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all font-bold dark:text-white"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Duration</label>
+                  <input
+                    required
+                    value={newCourse.duration}
+                    onChange={(e) => setNewCourse({...newCourse, duration: e.target.value})}
+                    placeholder="6 Months"
+                    className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all font-bold dark:text-white"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-4 pt-4">
+                <button 
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="flex-1 px-6 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-2xl font-bold hover:bg-slate-200 transition-all"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  className="flex-1 px-6 py-4 bg-orange-500 text-white rounded-2xl font-bold hover:bg-orange-600 shadow-lg shadow-orange-500/20 transition-all"
+                >
+                  Create Course
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
 
       {loading ? (
         <div className="flex justify-center items-center py-20 text-slate-500 font-medium text-lg gap-3">

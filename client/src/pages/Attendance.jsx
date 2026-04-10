@@ -151,22 +151,22 @@ function Attendance() {
           </p>
         </div>
 
-        <div className="flex bg-white/80 dark:bg-slate-800/80 p-2 rounded-2xl shadow-xl border border-white/20 backdrop-blur-xl gap-2">
+        <div className="flex flex-wrap bg-white/80 dark:bg-slate-800/80 p-2 rounded-2xl shadow-xl border border-white/20 backdrop-blur-xl gap-2 w-full md:w-auto">
           <input
             type="date"
             value={date}
-            className="border-0 bg-transparent text-slate-800 dark:text-white font-bold focus:outline-none focus:ring-0 px-4 py-2"
+            className="flex-1 min-w-[150px] border-0 bg-transparent text-slate-800 dark:text-white font-bold focus:outline-none focus:ring-0 px-4 py-2"
             onChange={(e) => setDate(e.target.value)}
           />
           <button
             onClick={markRemainingAbsent}
-            className="bg-red-500 hover:bg-red-600 text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-md active:scale-95"
+            className="flex-1 md:flex-none bg-red-500 hover:bg-red-600 text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-md active:scale-95"
           >
             Mark Remaining Absent
           </button>
           <button
             onClick={fetchAll}
-            className="bg-linear-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-md shadow-emerald-500/20 active:scale-95"
+            className="flex-1 md:flex-none bg-linear-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-md shadow-emerald-500/20 active:scale-95"
           >
             Filter
           </button>
@@ -303,7 +303,7 @@ function Attendance() {
             
             <div className="overflow-hidden bg-slate-50 dark:bg-slate-900/50">
               <div className="max-h-180 overflow-y-auto scrollbar-hide">
-                <table className="w-full text-left border-collapse relative">
+                <table className="w-full text-left border-collapse relative min-w-[600px]">
                   <thead className="sticky top-0 z-20">
                     <tr className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md shadow-sm border-b border-slate-100 dark:border-slate-700">
                       <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Digital Snapshot</th>

@@ -12,6 +12,8 @@ const formVariants = {
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("admin");
+  const [instituteCode, setInstituteCode] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -28,11 +30,16 @@ function Login() {
     setIsLoading(true);
     setError("");
     try {
-      const res = await API.post("/auth/login", { email, password });
+      const loginData = { email, password };
+      if (role !== "admin") {
+        loginData.instituteCode = instituteCode;
+      }
+      const res = await API.post("/auth/login", loginData);
       localStorage.setItem("token", res.data.token);
-      if (res.data.admin) {
-        localStorage.setItem("adminName", res.data.admin.name || "");
-        localStorage.setItem("adminEmail", res.data.admin.email || "");
+      if (res.data.user) {
+        localStorage.setItem("userName", res.data.user.name || "");
+        localStorage.setItem("userEmail", res.data.user.email || "");
+        localStorage.setItem("userRole", res.data.user.role || "");
       }
       navigate("/");
     } catch (err) {
@@ -64,7 +71,7 @@ function Login() {
       </div>
 
      
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-24 relative bg-white rounded-l-[3rem] lg:shadow-[-20px_0_50px_rgba(0,0,0,0.1)] z-20">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-24 relative bg-white lg:rounded-l-[3rem] lg:shadow-[-20px_0_50px_rgba(0,0,0,0.1)] z-20">
         <motion.div 
           variants={formVariants}
           initial="hidden"
@@ -74,10 +81,27 @@ function Login() {
           
           <div className="text-center lg:text-left">
             <h2 className="text-4xl font-black text-slate-800 tracking-tight mb-3">Welcome back</h2>
-            <p className="text-lg text-slate-500 font-medium tracking-wide">Please enter your admin credentials to continue.</p>
+            <p className="text-lg text-slate-500 font-medium tracking-wide">Sign in to your <span className="text-indigo-600 capitalize">{role}</span> portal.</p>
           </div>
 
           <form className="mt-10 space-y-6" onSubmit={login}>
+            <div className="flex p-1 bg-slate-100 rounded-2xl gap-1">
+              {["admin", "teacher", "student"].map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => setRole(r)}
+                  className={`flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+                    role === r 
+                      ? "bg-white text-indigo-600 shadow-sm" 
+                      : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
+                  }`}
+                >
+                  {r}
+                </button>
+              ))}
+            </div>
+
             <AnimatePresence>
               {error && (
                 <motion.div 
@@ -125,6 +149,30 @@ function Login() {
                   />
                 </div>
               </div>
+
+              {role !== "admin" && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="space-y-2 group"
+                >
+                  <label className="text-xs font-bold text-slate-500 tracking-widest uppercase ml-1">Institute Code</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Sparkles className="h-5 w-5 text-indigo-400 group-focus-within:text-indigo-500 transition-colors" />
+                    </div>
+                    <input
+                      type="text"
+                      required
+                      value={instituteCode}
+                      onChange={(e) => setInstituteCode(e.target.value)}
+                      className="block w-full pl-12 pr-4 py-4 bg-indigo-50/30 border border-indigo-100 rounded-2xl text-slate-900 font-black tracking-widest placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm focus:bg-white"
+                      placeholder="EDU1234"
+                    />
+                  </div>
+                </motion.div>
+              )}
             </div>
 
             <motion.button

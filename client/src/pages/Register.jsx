@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import API from "../services/api";
-import { BookOpen, Mail, Lock, CheckCircle2, ShieldCheck, User } from "lucide-react";
+import { BookOpen, Mail, Lock, CheckCircle2, ShieldCheck, User, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const formVariants = {
@@ -14,9 +14,12 @@ function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("admin");
+  const [instituteCode, setInstituteCode] = useState("");
   const [status, setStatus] = useState({ message: "", type: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [isOtpSent, setIsOtpSent] = useState(false);
+  const [admissionKey, setAdmissionKey] = useState("");
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
 
@@ -32,7 +35,7 @@ function Register() {
     }
 
     try {
-      const res = await API.post("/admin/register", { name, email, password });
+      const res = await API.post("/admin/register", { name, email, password, role, instituteCode, admissionKey });
       setStatus({ message: res.data.message || "OTP sent to your email.", type: "success" });
       setIsOtpSent(true);
     } catch (err) {
@@ -73,12 +76,12 @@ function Register() {
             Join EduCore today.
           </h1>
           <p className="text-slate-300 text-xl font-medium leading-relaxed">
-            Create an admin account to start managing your institution securely and efficiently. Your data is completely isolated from other admins.
+            EduCore is a modern and comprehensive management system designed to streamline academic and administrative tasks for everyone.
           </p>
         </div>
       </div>
 
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-24 relative bg-white rounded-l-[3rem] lg:shadow-[-20px_0_50px_rgba(0,0,0,0.1)] z-20">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-24 relative bg-white lg:rounded-l-[3rem] lg:shadow-[-20px_0_50px_rgba(0,0,0,0.1)] z-20">
         <motion.div
           variants={formVariants}
           initial="hidden"
@@ -106,11 +109,32 @@ function Register() {
               )}
             </AnimatePresence>
 
+            {!isOtpSent && (
+              <div className="flex p-1 bg-slate-100 rounded-2xl gap-1">
+                {["admin", "teacher", "student"].map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => setRole(r)}
+                    className={`flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+                      role === r 
+                        ? "bg-white text-indigo-600 shadow-sm" 
+                        : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
+                    }`}
+                  >
+                    {r}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {!isOtpSent ? (
               <div className="space-y-5">
                 {/* Institute / Admin Name */}
                 <div className="space-y-2 group">
-                  <label className="text-xs font-bold text-slate-500 tracking-widest uppercase ml-1">Institute / Admin Name</label>
+                  <label className="text-xs font-bold text-slate-500 tracking-widest uppercase ml-1">
+                    {role === "admin" ? "Institute / Admin Name" : "Full Name"}
+                  </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <User className="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
@@ -120,10 +144,50 @@ function Register() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       className="block w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-medium placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm focus:bg-white"
-                      placeholder="e.g. Bright Future Academy"
+                      placeholder={`e.g. ${role === "admin" ? "Bright Future Academy" : "John Doe"}`}
                     />
                   </div>
                 </div>
+
+                {role !== "admin" && (
+                  <div className="space-y-2 group">
+                    <label className="text-xs font-bold text-slate-500 tracking-widest uppercase ml-1">Institute Code</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <ShieldCheck className="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                      </div>
+                      <input
+                        type="text"
+                        required
+                        value={instituteCode}
+                        onChange={(e) => setInstituteCode(e.target.value.toUpperCase())}
+                        className="block w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-medium placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm focus:bg-white uppercase"
+                        placeholder="e.g. EDU1234"
+                      />
+                    </div>
+                    <p className="text-xs text-slate-400 ml-1 mt-1">Ask your administrator for the Institute Code to join their portal.</p>
+                  </div>
+                )}
+
+                {role === "student" && (
+                  <div className="space-y-2 group">
+                    <label className="text-xs font-bold text-slate-500 tracking-widest uppercase ml-1">Admission Key</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <Sparkles className="h-5 w-5 text-indigo-400 group-focus-within:text-indigo-500 transition-colors" />
+                      </div>
+                      <input
+                        type="text"
+                        required
+                        value={admissionKey}
+                        onChange={(e) => setAdmissionKey(e.target.value.toUpperCase())}
+                        className="block w-full pl-12 pr-4 py-4 bg-indigo-50 border border-indigo-100 rounded-2xl text-slate-900 font-black tracking-widest placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm focus:bg-white uppercase"
+                        placeholder="e.g. STU1234"
+                      />
+                    </div>
+                    <p className="text-[10px] text-slate-400 ml-1 mt-1 font-bold">This key was generated by your Admin when they added you to the system.</p>
+                  </div>
+                )}
 
                 {/* Email */}
                 <div className="space-y-2 group">
