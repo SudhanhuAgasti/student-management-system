@@ -7,7 +7,7 @@ import {
 import { Link } from "react-router-dom";
 
 function StudentDashboard({ data }) {
-  const { student, attendancePercentage, attendanceLogs, pendingFees } = data;
+  const { student, attendancePercentage, attendanceLogs, pendingFees, teacherName } = data;
 
   return (
     <div className="space-y-8 pb-12">
@@ -17,13 +17,24 @@ function StudentDashboard({ data }) {
           <p className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
             Student Portal
           </p>
-          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
+          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-none text-[inter]">
             Welcome, <span className="text-indigo-600 dark:text-indigo-400">{student.name}</span> 👋
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">
             Track your academic progress and fee status.
           </p>
         </div>
+        {teacherName && (
+           <div className="bg-white dark:bg-slate-800 px-6 py-3 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                <User size={20} />
+              </div>
+              <div>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Assigned Teacher</p>
+                <p className="font-bold text-slate-700 dark:text-white">{teacherName}</p>
+              </div>
+           </div>
+        )}
       </div>
 
       {/* Quick Stats */}

@@ -100,7 +100,20 @@ function Dashboard() {
     return <TeacherDashboard data={data} />;
   }
 
-  // Default: Admin Dashboard
+  if (data.role !== "admin") {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 text-center">
+        <AlertCircle size={48} className="text-rose-500 mb-2" />
+        <h2 className="text-2xl font-black text-slate-900 dark:text-white">Account Error</h2>
+        <p className="text-slate-500 font-medium max-w-md">
+          Your account role is not recognized or the dashboard failed to load. 
+          Please try logging out and back in.
+        </p>
+      </div>
+    );
+  }
+
+  // Admin Dashboard View (role === "admin")
   const handleSendReminders = async () => {
     setIsSending(true);
     try {
@@ -172,7 +185,7 @@ function Dashboard() {
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
             Good {new Date().getHours() < 12 ? "Morning" : new Date().getHours() < 18 ? "Afternoon" : "Evening"}, {" "}
             <span className="text-indigo-600 dark:text-indigo-400">
-              {localStorage.getItem("adminName") || "Admin"}
+              {localStorage.getItem("userName") || "Admin"}
             </span> 👋
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">
@@ -369,45 +382,51 @@ function Dashboard() {
             <div className="h-56 flex items-center justify-center">
               <div className="w-10 h-10 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
             </div>
-          ) : pieData.length === 0 ? (
+          ) : (data.courseStats || []).length === 0 ? (
             <div className="h-56 flex flex-col items-center justify-center gap-3 text-slate-300 dark:text-slate-700">
               <BookOpen size={48} />
               <p className="text-sm font-bold">No courses yet</p>
             </div>
           ) : (
             <>
-              <div className="relative flex items-center justify-center h-52">
-                <RechartsPie width={180} height={180}>
-                  <Pie
-                    data={pieData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={55}
-                    outerRadius={85}
-                    paddingAngle={4}
-                    dataKey="value"
-                    strokeWidth={0}
-                  >
-                    {pieData.map((entry, i) => (
-                      <Cell key={i} fill={entry.fill} />
-                    ))}
-                  </Pie>
-                </RechartsPie>
+              <div className="relative flex items-center justify-center h-52 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RechartsPie>
+                    <Pie
+                      data={(data.courseStats || []).map((c, i) => ({
+                        name: c._id || "Other",
+                        value: c.count || 0,
+                        fill: COLORS[i % COLORS.length],
+                      }))}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={55}
+                      outerRadius={85}
+                      paddingAngle={4}
+                      dataKey="value"
+                      strokeWidth={0}
+                    >
+                      {(data.courseStats || []).map((entry, i) => (
+                        <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                      ))}
+                    </Pie>
+                  </RechartsPie>
+                </ResponsiveContainer>
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                   <span className="text-3xl font-black text-slate-900 dark:text-white tabular-nums">
-                    {pieData.reduce((s, c) => s + c.value, 0)}
+                    {(data.courseStats || []).reduce((s, c) => s + (c.count || 0), 0)}
                   </span>
                   <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">TOTAL</span>
                 </div>
               </div>
               <div className="space-y-2.5 mt-4">
-                {pieData.slice(0, 4).map((c, i) => (
+                {(data.courseStats || []).slice(0, 4).map((c, i) => (
                   <div key={i} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: c.fill }}></div>
-                      <span className="text-sm font-bold text-slate-700 dark:text-slate-300 truncate max-w-24">{c.name}</span>
+                      <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: COLORS[i % COLORS.length] }}></div>
+                      <span className="text-sm font-bold text-slate-700 dark:text-slate-300 truncate max-w-24">{c._id || "Other"}</span>
                     </div>
-                    <span className="text-sm font-black text-slate-900 dark:text-white">{c.value}</span>
+                    <span className="text-sm font-black text-slate-900 dark:text-white">{c.count || 0}</span>
                   </div>
                 ))}
               </div>

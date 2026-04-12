@@ -90,7 +90,9 @@ function Register() {
         >
           <div className="text-center lg:text-left">
             <h2 className="text-4xl font-black text-slate-800 tracking-tight mb-3">Create an account</h2>
-            <p className="text-lg text-slate-500 font-medium tracking-wide">Register a new administrator profile.</p>
+            <p className="text-lg text-slate-500 font-medium tracking-wide">
+              Sign up as a <span className="text-indigo-600 capitalize">{role}</span> for your institute.
+            </p>
           </div>
 
           <form className="mt-10 space-y-6" onSubmit={isOtpSent ? verifyOtp : register}>

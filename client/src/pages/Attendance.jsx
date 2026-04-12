@@ -137,6 +137,8 @@ function Attendance() {
     }
   };
 
+  const userRole = localStorage.getItem("userRole") || "";
+
   return (
     <div className="max-w-7xl mx-auto space-y-8 p-6">
       {/* Header */}
@@ -158,12 +160,14 @@ function Attendance() {
             className="flex-1 min-w-[150px] border-0 bg-transparent text-slate-800 dark:text-white font-bold focus:outline-none focus:ring-0 px-4 py-2"
             onChange={(e) => setDate(e.target.value)}
           />
-          <button
-            onClick={markRemainingAbsent}
-            className="flex-1 md:flex-none bg-red-500 hover:bg-red-600 text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-md active:scale-95"
-          >
-            Mark Remaining Absent
-          </button>
+          {userRole === "admin" && (
+            <button
+              onClick={markRemainingAbsent}
+              className="flex-1 md:flex-none bg-red-500 hover:bg-red-600 text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-md active:scale-95"
+            >
+              Mark Remaining Absent
+            </button>
+          )}
           <button
             onClick={fetchAll}
             className="flex-1 md:flex-none bg-linear-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-md shadow-emerald-500/20 active:scale-95"

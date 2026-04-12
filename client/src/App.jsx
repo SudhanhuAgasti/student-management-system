@@ -26,7 +26,7 @@ function AppContent() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="flex bg-slate-50 dark:bg-[#020617] min-h-screen text-slate-800 dark:text-slate-100 font-sans antialiased overflow-hidden relative transition-colors duration-500">
+    <div className="flex bg-slate-50 dark:bg-[#020617] h-screen text-slate-800 dark:text-slate-100 font-sans antialiased overflow-hidden relative transition-colors duration-500">
       
       {/* Global Background Elements */}
       {!isAuthPage && (
@@ -54,7 +54,7 @@ function AppContent() {
       )}
 
       {/* Main Content Area */}
-      <div className={`flex-1 flex flex-col min-h-screen overflow-x-hidden relative z-10 ${!isAuthPage ? "w-full md:w-auto" : ""}`}>
+      <div className={`flex-1 flex flex-col h-screen overflow-y-auto min-w-0 relative z-10 transition-all duration-300 ${!isAuthPage ? "w-full" : ""}`}>
         
         {/* Mobile Top Bar */}
         {!isAuthPage && (

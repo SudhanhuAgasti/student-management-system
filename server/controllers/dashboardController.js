@@ -50,11 +50,16 @@ exports.getDashboardStats = async (req, res, next) => {
         courseStats
       });
     } else if (role === "student") {
-      // Find the student record linked to this user
+      const Class = require("../models/Class");
+      
       const student = await Student.findOne({ userId }).populate("adminId", "name");
       if (!student) {
         return res.status(404).json({ message: "Student record not found" });
       }
+
+      // Find the teacher assigned to this student by looking for their rollNumber in classes
+      const assignedClass = await Class.findOne({ "students.rollNumber": student.rollNumber }).populate("teacherId", "name");
+      const teacherName = assignedClass ? assignedClass.teacherId.name : "Not Assigned";
 
       const attendanceLogs = await Attendance.find({ studentId: student._id })
         .sort({ date: -1 })
@@ -67,6 +72,7 @@ exports.getDashboardStats = async (req, res, next) => {
       return res.json({
         role: "student",
         student,
+        teacherName,
         attendancePercentage,
         attendanceLogs,
         pendingFees: Math.max(0, student.totalFees - student.feesPaid)
