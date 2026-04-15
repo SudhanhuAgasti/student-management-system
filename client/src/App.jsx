@@ -19,6 +19,8 @@ import AdminTeacherClasses from "./pages/AdminTeacherClasses";
 import StudentContent from "./pages/StudentContent";
 import PageTransition from "./components/PageTransition";
 import { AnimatePresence } from "framer-motion";
+import StudentTeacherFooter from "./components/StudentTeacherFooter";
+import AdminFooter from "./components/AdminFooter";
 
 function AppContent() {
   const location = useLocation();
@@ -100,6 +102,16 @@ function AppContent() {
             </Route>
           </Routes>
         </AnimatePresence>
+        
+        {!isAuthPage && (
+          <>
+            {localStorage.getItem("userRole") === "admin" ? (
+              <AdminFooter />
+            ) : (localStorage.getItem("userRole") === "student" || localStorage.getItem("userRole") === "teacher") ? (
+              <StudentTeacherFooter />
+            ) : null}
+          </>
+        )}
         </div>
       </div>
     </div>

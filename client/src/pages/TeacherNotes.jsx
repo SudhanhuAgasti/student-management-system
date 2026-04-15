@@ -107,7 +107,7 @@ function TeacherNotes() {
             Resource Management
           </p>
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
-            Course <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-emerald-500">Materials</span> 📚
+            Course <span className="text-transparent bg-clip-text bg-linear-to-r from-teal-500 to-emerald-500">Materials</span> 📚
           </h1>
           <p className="text-slate-500 font-medium mt-2 max-w-2xl">
             Upload and share PDF notes, assignments, and reference materials directly with your batches.
@@ -119,7 +119,7 @@ function TeacherNotes() {
         
         {/* Upload Form */}
         <div className="lg:col-span-1">
-          <div className="bg-white dark:bg-[#111827] rounded-[2rem] p-8 border border-slate-100 dark:border-slate-800 shadow-sm sticky top-6">
+          <div className="bg-white dark:bg-[#111827] rounded-4xl p-8 border border-slate-100 dark:border-slate-800 shadow-sm sticky top-6">
             <h3 className="text-xl font-black text-slate-900 dark:text-white mb-6 flex items-center gap-3">
               <UploadCloud className="text-teal-500" />
               Upload New File

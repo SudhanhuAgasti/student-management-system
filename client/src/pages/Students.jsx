@@ -21,6 +21,7 @@ const rowVariants = {
 function Students() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
   const fetchStudents = () => {

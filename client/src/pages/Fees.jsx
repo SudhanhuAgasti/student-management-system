@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
-import { CreditCard, Sparkles, AlertCircle, MessageCircle, Wallet } from "lucide-react";
+import { CreditCard, Sparkles, AlertCircle, MessageCircle, Wallet, Download, Search } from "lucide-react";
 import { motion } from "framer-motion";
+import { generateFeeReceipt, shareFeeReceipt } from "../utils/pdfGenerator";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -18,6 +19,7 @@ function Fees() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("pending");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -89,6 +91,20 @@ function Fees() {
         </div>
       </div>
 
+      {/* Global Search */}
+      <div className="flex items-center gap-4 bg-white/40 dark:bg-slate-800/40 p-1.5 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 w-full overflow-hidden">
+        <div className="flex items-center gap-2 pl-4 text-slate-400">
+           <Search size={18} />
+        </div>
+        <input 
+          type="text" 
+          placeholder={`Search ${activeTab === 'pending' ? 'defaulters' : 'transactions'}...`}
+          className="flex-1 bg-transparent border-0 focus:ring-0 text-sm font-bold placeholder:text-slate-400 py-3"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+
       <div className="glass border-0 bg-white/60 dark:bg-slate-800/60 rounded-[3rem] shadow-2xl overflow-hidden backdrop-blur-xl p-4 min-h-100">
         {loading ? (
           <div className="flex justify-center items-center h-64 text-slate-500 font-medium text-lg gap-3">
@@ -102,7 +118,9 @@ function Fees() {
               </div>
             ) : (
               <motion.div variants={containerVariants} initial="hidden" animate="show" className="contents">
-                {pendingStudents.map(student => {
+                {pendingStudents
+                  .filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                  .map(student => {
                   const pendingAmount = student.totalFees - student.feesPaid;
                   const message = `*🎓 Educore Institute Notice*\n\nDear ${student.name},\nThis is an official reminder regarding your pending fees for the *${student.course || "enrolled"}* course.\n\n*Pending Details:*\n- Total Fee: ₹${student.totalFees}\n- Amount Paid: ₹${student.feesPaid}\n- *Pending Balance: ₹${pendingAmount}*\n\nPlease clear your dues at the earliest convenience to avoid any disruption in your classes.\n\nRegards,\n*Educore Administration !!*`;
                   return (
@@ -155,12 +173,13 @@ function Fees() {
           </div>
         ) : (
           <div className="overflow-x-auto rounded-3xl bg-white/40 custom-scrollbar-hide">
-            <table className="w-full text-left border-collapse min-w-[700px]">
+            <table className="w-full text-left border-collapse min-w-175">
               <thead>
                 <tr className="border-b border-slate-200/60 bg-white/50">
                   <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest">Student Information</th>
                   <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest">Amount Paid</th>
                   <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest">Transaction Date</th>
+                  <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest text-right">Receipt</th>
                 </tr>
               </thead>
               <motion.tbody
@@ -176,7 +195,9 @@ function Fees() {
                     </td>
                   </tr>
                 ) : (
-                  fees.map((f) => (
+                  fees
+                    .filter(f => (f.studentId?.name || "Unknown").toLowerCase().includes(searchQuery.toLowerCase()))
+                    .map((f) => (
                     <motion.tr
                       variants={rowVariants}
                       key={f._id}
@@ -203,6 +224,25 @@ function Fees() {
                             day: 'numeric'
                           })}
                         </div>
+                      </td>
+                      <td className="px-8 py-5 whitespace-nowrap text-right">
+                        <button 
+                          onClick={() => generateFeeReceipt({ 
+                            student: { 
+                              name: f.studentId?.name || "Student", 
+                              _id: f.studentId?._id || "ID", 
+                              course: f.studentId?.course || "Course" 
+                            }, 
+                            transaction: { 
+                              amount: f.amountPaid || f.amount || 0, 
+                              remaining: (f.studentId?.totalFees || 0) - (f.studentId?.feesPaid || 0) 
+                            } 
+                          })}
+                          className="p-3 bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-indigo-600 rounded-xl transition-all"
+                          title="Download Receipt"
+                        >
+                          <Download size={18} />
+                        </button>
                       </td>
                     </motion.tr>
                   ))

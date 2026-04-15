@@ -13,6 +13,7 @@ const courseRoutes = require("./routes/courseRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const authRoutes = require("./routes/authRoutes");
 const teacherRoutes = require("./routes/teacherRoutes");
+const noticeRoutes = require("./routes/noticeRoutes");
 
 const authMiddleware = require("./middleware/authMiddleware");
 const { errorHandler } = require("./middleware/errorMiddleware");
@@ -33,6 +34,7 @@ app.use("/api", authMiddleware, feeRoutes);
 app.use("/api", authMiddleware, courseRoutes);
 app.use("/api", authMiddleware, dashboardRoutes);
 app.use("/api", authMiddleware, teacherRoutes);
+app.use("/api", authMiddleware, noticeRoutes);
 
 app.get("/", (req, res) => {
   res.send("Coaching Management API Running");

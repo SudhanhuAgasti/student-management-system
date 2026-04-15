@@ -3,10 +3,13 @@ import { motion } from "framer-motion";
 import { 
   Users, Sparkles, ClipboardList, PenTool, IndianRupee, Presentation
 } from "lucide-react";
+import NoticeBoard from "./NoticeBoard";
+import BroadcastBanner from "./BroadcastBanner";
 
 function TeacherDashboard({ data }) {
   return (
     <div className="space-y-8 pb-12">
+      <BroadcastBanner />
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <p className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
@@ -104,6 +107,7 @@ function TeacherDashboard({ data }) {
         <p className="text-xs font-bold text-slate-400 mt-4 px-2">* Note: This section is read-only. Only the institute admin can update your payment records.</p>
       </div>
 
+      <NoticeBoard />
     </div>
   );
 }

@@ -12,9 +12,12 @@ import {
   ShieldCheck,
   CheckCircle2,
   XCircle,
-  Clock
+  Clock,
+  Download,
+  Search
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { generateAttendanceReport } from "../utils/pdfGenerator";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -39,6 +42,7 @@ function Attendance() {
   const [isRecognitionLoading, setIsRecognitionLoading] = useState(false);
   const [modelsLoaded, setModelsLoaded] = useState(false);
   const [recognitionResult, setRecognitionResult] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const webcamRef = useRef(null);
 
   useEffect(() => {
@@ -177,6 +181,20 @@ function Attendance() {
         </div>
       </div>
 
+      {/* Stats Quick Overview */}
+      <div className="flex items-center gap-4 bg-white/40 dark:bg-slate-800/40 p-1.5 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 w-full overflow-hidden">
+        <div className="flex items-center gap-2 pl-4 text-slate-400">
+           <Search size={18} />
+        </div>
+        <input 
+          type="text" 
+          placeholder="Search identity or name..."
+          className="flex-1 bg-transparent border-0 focus:ring-0 text-sm font-bold placeholder:text-slate-400 py-3"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Left Col: Recognition Terminal */}
@@ -296,10 +314,18 @@ function Attendance() {
         <div className="lg:col-span-7">
           <div className="border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-800 rounded-4xl shadow-2xl overflow-hidden p-2 min-h-200">
             <div className="p-6 flex items-center justify-between border-b border-slate-50 dark:border-slate-700/50">
-               <h2 className="text-xl font-black text-slate-800 dark:text-white flex items-center gap-3">
-                 <History size={24} className="text-teal-500" />
-                 Engagement Logs
-               </h2>
+               <div className="flex items-center gap-6">
+                 <h2 className="text-xl font-black text-slate-800 dark:text-white flex items-center gap-3">
+                   <History size={24} className="text-teal-500" />
+                   Engagement Logs
+                 </h2>
+                 <button 
+                   onClick={() => generateAttendanceReport(attendance[0]?.studentId || { name: "Group", course: "Attendance" }, attendance)}
+                   className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md shadow-emerald-500/20"
+                 >
+                   <Download size={14} /> Export Table PDF
+                 </button>
+               </div>
                <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 dark:bg-slate-900 px-3 py-1 rounded-full">
                  {attendance.length} Records Found
                </div>
@@ -340,7 +366,9 @@ function Attendance() {
                         </td>
                       </tr>
                     ) : (
-                      attendance.map((a) => (
+                      attendance
+                        .filter(a => (a.studentId?.name || a.studentName || "").toLowerCase().includes(searchQuery.toLowerCase()))
+                        .map((a) => (
                         <motion.tr
                           variants={rowVariants}
                           key={a._id}

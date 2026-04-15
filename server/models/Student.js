@@ -1,13 +1,21 @@
 const mongoose = require("mongoose");
 
 const studentSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
+  email: {
+    type: String,
+    unique: true,
+    sparse: true // Only for registered students
+  },
+  password: {
+    type: String
+  },
+  role: {
+    type: String,
+    default: "student"
   },
   adminId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "Admin",
     required: true
   },
 
@@ -39,6 +47,11 @@ const studentSchema = new mongoose.Schema({
 
   rollNumber: {
     type: String,
+  },
+
+  profilePic: {
+    type: String,
+    default: ""
   },
 
   faceEmbedding: {

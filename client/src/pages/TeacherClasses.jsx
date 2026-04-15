@@ -236,7 +236,7 @@ function TeacherClasses() {
         {/* Selected Class Detail View */}
         <div className="lg:col-span-2">
           {selectedClass ? (
-            <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 sm:p-8 shadow-sm border border-slate-100 dark:border-slate-800 min-h-full">
+            <div className="bg-white dark:bg-slate-900 rounded-4xl p-6 sm:p-8 shadow-sm border border-slate-100 dark:border-slate-800 min-h-full">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-6 border-b border-slate-100 dark:border-slate-800">
                 <div>
                   <h2 className="text-2xl font-black text-slate-800 dark:text-white mb-2">{selectedClass.name} <span className="text-indigo-500">({selectedClass.subject})</span></h2>
@@ -335,7 +335,7 @@ function TeacherClasses() {
               )}
             </div>
           ) : (
-            <div className="bg-slate-50/50 dark:bg-slate-900/30 rounded-[2rem] p-8 flex flex-col items-center justify-center text-center h-full border border-dashed border-slate-200 dark:border-slate-800 min-h-[400px]">
+            <div className="bg-slate-50/50 dark:bg-slate-900/30 rounded-4xl p-8 flex flex-col items-center justify-center text-center h-full border border-dashed border-slate-200 dark:border-slate-800 min-h-100">
               <div className="w-20 h-20 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-sm mb-6">
                  <LayoutDashboard size={32} className="text-slate-300 dark:text-slate-600" />
               </div>

@@ -1,7 +1,8 @@
 const Student = require("../models/Student");
 const Attendance = require("../models/Attendance");
 const Fee = require("../models/Fee");
-const User = require("../models/User");
+const Teacher = require("../models/Teacher");
+const Admin = require("../models/Admin");
 const mongoose = require("mongoose");
 
 exports.getDashboardStats = async (req, res, next) => {
@@ -52,12 +53,11 @@ exports.getDashboardStats = async (req, res, next) => {
     } else if (role === "student") {
       const Class = require("../models/Class");
       
-      const student = await Student.findOne({ userId }).populate("adminId", "name");
+      const student = await Student.findById(userId).populate("adminId", "name");
       if (!student) {
         return res.status(404).json({ message: "Student record not found" });
       }
 
-      // Find the teacher assigned to this student by looking for their rollNumber in classes
       const assignedClass = await Class.findOne({ "students.rollNumber": student.rollNumber }).populate("teacherId", "name");
       const teacherName = assignedClass ? assignedClass.teacherId.name : "Not Assigned";
 
@@ -78,8 +78,9 @@ exports.getDashboardStats = async (req, res, next) => {
         pendingFees: Math.max(0, student.totalFees - student.feesPaid)
       });
     } else if (role === "teacher") {
-      const teacherUser = await User.findById(userId);
+      const teacherUser = await Teacher.findById(userId);
       const Class = require("../models/Class");
+      if (!teacherUser) return res.status(404).json({ message: "Teacher record not found" });
       
       const teacherClasses = await Class.find({ teacherId: userId });
       const totalStudentsAssigned = teacherClasses.reduce((sum, c) => sum + c.students.length, 0);
