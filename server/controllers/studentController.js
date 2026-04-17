@@ -2,17 +2,8 @@ const Student = require("../models/Student");
 const multer = require("multer");
 const path = require("path");
 
-// Multer Storage config
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (req, file, cb) {
-    cb(null, `profile-${Date.now()}${path.extname(file.originalname)}`);
-  }
-});
-
-const upload = multer({ storage: storage });
+const { uploadStudentPic } = require("../config/cloudinary");
+const upload = uploadStudentPic;
 exports.upload = upload;
 
 exports.addStudent = async (req, res, next) => {
@@ -107,7 +98,7 @@ exports.updateProfilePic = async (req, res, next) => {
 
     const student = await Student.findByIdAndUpdate(
       req.user.id,
-      { profilePic: `/uploads/${req.file.filename}` },
+      { profilePic: req.file.path },
       { returnDocument: 'after' }
     );
 

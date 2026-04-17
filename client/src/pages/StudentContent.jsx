@@ -146,7 +146,7 @@ function StudentContent() {
                   <p className="text-sm text-slate-500 line-clamp-2 mb-4 h-10">{note.description}</p>
                 )}
                 <a
-                  href={`http://localhost:5000${note.fileUrl}`}
+                  href={note.fileUrl.startsWith('http') ? note.fileUrl : `http://localhost:5000${note.fileUrl}`}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-2 text-xs font-black text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 underline underline-offset-4"

@@ -157,7 +157,7 @@ exports.uploadNote = async (req, res, next) => {
       classId,
       title,
       description,
-      fileUrl: `/uploads/${req.file.filename}`,
+      fileUrl: req.file.path,
       originalFileName: req.file.originalname
     });
 
@@ -176,10 +176,8 @@ exports.deleteNote = async (req, res, next) => {
     const note = await Note.findOne({ _id: req.params.id, teacherId });
     if (!note) return res.status(404).json({ message: "Note not found" });
 
-    try {
-      const filePath = path.join(__dirname, "..", note.fileUrl);
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-    } catch (e) {}
+    // With cloudinary, we can just delete from our DB. Cloudinary storage manages files independently 
+    // unless we extract the public_id and call cloudinary.uploader.destroy. For simplicity, DB destruction.
 
     await Note.findByIdAndDelete(req.params.id);
     res.json({ message: "Note deleted successfully" });

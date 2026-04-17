@@ -254,7 +254,7 @@ function TeacherNotes() {
                     </span>
                     
                     <a 
-                      href={`http://localhost:5000${note.fileUrl}`} 
+                      href={note.fileUrl.startsWith('http') ? note.fileUrl : `http://localhost:5000${note.fileUrl}`} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 text-xs font-bold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10 px-3 py-1.5 rounded-lg hover:bg-teal-100 dark:hover:bg-teal-500/20 transition-colors"

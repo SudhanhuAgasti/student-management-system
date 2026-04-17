@@ -19,24 +19,9 @@ const {
   getStudentContent
 } = require("../controllers/teacherController");
 
-const multer = require("multer");
-const path = require("path");
-
 // Configure multer storage
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    const fs = require("fs");
-    const dir = "./uploads";
-    if (!fs.existsSync(dir)){
-        fs.mkdirSync(dir);
-    }
-    cb(null, dir);
-  },
-  filename: function(req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
-  }
-});
-const upload = multer({ storage: storage });
+const { uploadTeacherNote } = require("../config/cloudinary");
+const upload = uploadTeacherNote;
 
 router.get("/admin/institute-classes", authorizeRoles("admin"), getInstituteClasses);
 router.post("/admin/teacher-payment/:teacherId", authorizeRoles("admin"), updateTeacherPayment);

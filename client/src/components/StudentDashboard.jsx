@@ -167,7 +167,7 @@ function StudentDashboard({ data }) {
                   <div className={`w-full h-full relative transition-all duration-300 ${showProfileOptions ? "blur-md scale-95" : ""}`}>
                     {student.profilePic ? (
                       <img
-                        src={`http://localhost:5000${student.profilePic}`}
+                        src={student.profilePic.startsWith('http') ? student.profilePic : `http://localhost:5000${student.profilePic}`}
                         className="w-full h-full object-cover rounded-[1.4rem] border-2 border-white dark:border-slate-900 cursor-pointer shadow-inner"
                         alt="Profile"
                       />
@@ -246,7 +246,7 @@ function StudentDashboard({ data }) {
                     </button>
                     {student.profilePic ? (
                       <img
-                        src={`http://localhost:5000${student.profilePic}`}
+                        src={student.profilePic.startsWith('http') ? student.profilePic : `http://localhost:5000${student.profilePic}`}
                         className="w-full h-full object-contain"
                         alt="Full Profile"
                       />
