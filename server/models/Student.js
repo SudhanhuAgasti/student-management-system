@@ -62,7 +62,13 @@ const studentSchema = new mongoose.Schema({
     type: String,
     unique: true,
     sparse: true
-  }
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
+  otp: String,
+  otpExpires: Date
 });
 
 module.exports = mongoose.model("Student", studentSchema);

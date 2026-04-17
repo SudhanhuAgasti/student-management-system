@@ -115,9 +115,10 @@ const NoticeBoard = () => {
               {isAdmin && (
                 <button 
                   onClick={() => handleDelete(notice._id)}
-                  className="absolute top-4 right-4 text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-md"
+                  className="absolute top-10 right-4 text-rose-500 transition-all p-2 bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 rounded-xl"
+                  title="Delete Notice"
                 >
-                  <Trash2 size={14} />
+                  <Trash2 size={16} />
                 </button>
               )}
             </motion.div>

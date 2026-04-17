@@ -3,6 +3,7 @@ const Attendance = require("../models/Attendance");
 const Fee = require("../models/Fee");
 const Teacher = require("../models/Teacher");
 const Admin = require("../models/Admin");
+const Class = require("../models/Class");
 const mongoose = require("mongoose");
 
 exports.getDashboardStats = async (req, res, next) => {
@@ -11,6 +12,9 @@ exports.getDashboardStats = async (req, res, next) => {
     const role = req.user.role;
 
     if (role === "admin") {
+      if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({ message: "Invalid Admin ID" });
+      }
       const adminId = new mongoose.Types.ObjectId(userId);
 
       const totalStudents = await Student.countDocuments({ adminId });
@@ -51,15 +55,21 @@ exports.getDashboardStats = async (req, res, next) => {
         courseStats
       });
     } else if (role === "student") {
-      const Class = require("../models/Class");
       
       const student = await Student.findById(userId).populate("adminId", "name");
       if (!student) {
         return res.status(404).json({ message: "Student record not found" });
       }
 
-      const assignedClass = await Class.findOne({ "students.rollNumber": student.rollNumber }).populate("teacherId", "name");
-      const teacherName = assignedClass ? assignedClass.teacherId.name : "Not Assigned";
+      const assignedClasses = await Class.find({ 
+        $or: [
+          { "students.rollNumber": student.rollNumber },
+          { "students.name": student.name }
+        ]
+      }).populate("teacherId", "name");
+      
+      const teacherNames = [...new Set(assignedClasses.map(c => c.teacherId?.name).filter(Boolean))];
+      const teacherName = teacherNames.length > 0 ? teacherNames.join(", ") : "Not Assigned";
 
       const attendanceLogs = await Attendance.find({ studentId: student._id })
         .sort({ date: -1 })
@@ -75,11 +85,10 @@ exports.getDashboardStats = async (req, res, next) => {
         teacherName,
         attendancePercentage,
         attendanceLogs,
-        pendingFees: Math.max(0, student.totalFees - student.feesPaid)
+        pendingFees: Math.max(0, (student.totalFees || 0) - (student.feesPaid || 0))
       });
     } else if (role === "teacher") {
       const teacherUser = await Teacher.findById(userId);
-      const Class = require("../models/Class");
       if (!teacherUser) return res.status(404).json({ message: "Teacher record not found" });
       
       const teacherClasses = await Class.find({ teacherId: userId });
@@ -98,6 +107,9 @@ exports.getDashboardStats = async (req, res, next) => {
         }
       });
     }
+
+    // Fallback if no role matched
+    return res.status(403).json({ message: "Unauthorized role or invalid account state" });
 
   } catch (err) {
     next(err);

@@ -35,7 +35,13 @@ const teacherSchema = new mongoose.Schema({
   adminId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Admin" // We will create Admin model next
-  }
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
+  otp: String,
+  otpExpires: Date
 });
 
 module.exports = mongoose.model("Teacher", teacherSchema);

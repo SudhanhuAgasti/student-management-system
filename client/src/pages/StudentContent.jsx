@@ -38,15 +38,15 @@ function StudentContent() {
 
   return (
     <div className="space-y-10 pb-12">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div>
-          <p className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-2">
-            <ShieldCheck size={14} className="text-indigo-500" /> Authorized Access Only
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-4 border-b border-slate-100 dark:border-slate-800">
+        <div className="flex-1">
+          <p className="text-xs font-black text-indigo-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+            <ShieldCheck size={14} /> Authorized Access Only
           </p>
-          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
-            My Learning <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">Resources</span> 🎓
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-none mb-4">
+            My Learning <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-500 to-purple-500">Resources</span> 🎓
           </h1>
-          <p className="text-slate-500 font-medium mt-3 max-w-2xl">
+          <p className="text-slate-500 font-medium text-sm sm:text-base max-w-2xl leading-relaxed">
             Access exclusive notes, assignments and join live classes assigned specifically to your batch.
           </p>
         </div>
@@ -66,28 +66,34 @@ function StudentContent() {
             <p className="text-slate-500 font-bold">No active online classes at the moment.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {content.onlineClasses.map((oc) => (
               <motion.div
                 key={oc._id}
                 whileHover={{ y: -5 }}
-                className="bg-white dark:bg-[#111827] rounded-3xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm relative overflow-hidden group"
+                className="bg-white dark:bg-[#111827] rounded-3xl p-6 lg:p-7 border border-slate-100 dark:border-slate-800 shadow-sm relative overflow-hidden group"
               >
-                <div className="absolute top-0 right-0 p-4">
-                  <div className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></div>
+                <div className="absolute top-0 right-0 p-5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></div>
                 </div>
-                <h3 className="text-lg font-black text-slate-800 dark:text-white mb-2 truncate pr-4">{oc.title}</h3>
-                <div className="space-y-2 mb-6">
-                  <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
-                    <GraduationCap size={14} className="text-indigo-500" />
-                    <span>{oc.classId?.name} ({oc.classId?.subject})</span>
+                <h3 className="text-lg font-black text-slate-800 dark:text-white mb-3 truncate pr-6">{oc.title}</h3>
+                <div className="space-y-3 mb-8">
+                  <div className="flex items-center gap-3 text-xs font-bold text-slate-500">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-500 shrink-0">
+                      <GraduationCap size={16} />
+                    </div>
+                    <span className="truncate">{oc.classId?.name} ({oc.classId?.subject})</span>
                   </div>
-                  <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
-                    <Calendar size={14} className="text-indigo-500" />
-                    <span>{new Date(oc.scheduledDate).toLocaleDateString()}</span>
+                  <div className="flex items-center gap-3 text-xs font-bold text-slate-500">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-500 shrink-0">
+                      <Calendar size={16} />
+                    </div>
+                    <span>{new Date(oc.scheduledDate).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
-                    <Clock size={14} className="text-indigo-500" />
+                  <div className="flex items-center gap-3 text-xs font-bold text-slate-500">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-500 shrink-0">
+                      <Clock size={16} />
+                    </div>
                     <span>{new Date(oc.scheduledDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
                 </div>
@@ -95,7 +101,7 @@ function StudentContent() {
                   href={oc.meetLink}
                   target="_blank"
                   rel="noreferrer"
-                  className="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg shadow-rose-500/20"
+                  className="w-full py-3.5 bg-rose-500 hover:bg-rose-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-3 shadow-lg shadow-rose-500/20 active:scale-95"
                 >
                   Join Meeting <ExternalLink size={14} />
                 </a>
