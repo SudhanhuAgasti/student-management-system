@@ -1,27 +1,37 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { Menu, BookOpen } from "lucide-react";
+import { Menu, BookOpen, Loader2 } from "lucide-react";
 import Sidebar from "./components/Sidebar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import TopNavbar from "./components/TopNavbar";
 
-import Dashboard from "./pages/Dashboard";
-import Students from "./pages/Students";
-import AddStudent from "./pages/AddStudent";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Fees from "./pages/Fees";
-import Courses from "./pages/Courses";
-import Attendance from "./pages/Attendance";
-import FaceRegistration from "./pages/FaceRegistration";
-import TeacherClasses from "./pages/TeacherClasses";
-import TeacherNotes from "./pages/TeacherNotes";
-import AdminTeacherClasses from "./pages/AdminTeacherClasses";
-import StudentContent from "./pages/StudentContent";
+// Lazy loading pages for better performance
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Students = lazy(() => import("./pages/Students"));
+const AddStudent = lazy(() => import("./pages/AddStudent"));
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const Fees = lazy(() => import("./pages/Fees"));
+const Courses = lazy(() => import("./pages/Courses"));
+const Attendance = lazy(() => import("./pages/Attendance"));
+const FaceRegistration = lazy(() => import("./pages/FaceRegistration"));
+const TeacherClasses = lazy(() => import("./pages/TeacherClasses"));
+const TeacherNotes = lazy(() => import("./pages/TeacherNotes"));
+const AdminTeacherClasses = lazy(() => import("./pages/AdminTeacherClasses"));
+const StudentContent = lazy(() => import("./pages/StudentContent"));
+
 import PageTransition from "./components/PageTransition";
 import { AnimatePresence } from "framer-motion";
 import StudentTeacherFooter from "./components/StudentTeacherFooter";
 import AdminFooter from "./components/AdminFooter";
+
+// Simple Loading Component
+const LoadingFallback = () => (
+  <div className="w-full h-full flex flex-col items-center justify-center min-h-[60vh] gap-4">
+    <Loader2 className="animate-spin text-indigo-500" size={40} />
+    <p className="text-xs font-black text-slate-400 uppercase tracking-widest animate-pulse">Initializing Portal...</p>
+  </div>
+);
 
 function AppContent() {
   const location = useLocation();
@@ -81,31 +91,33 @@ function AppContent() {
 
         <div className={`flex-1 ${!isAuthPage ? "p-4 md:p-8 lg:p-10" : ""}`}>
           <AnimatePresence mode="wait">
-          <Routes location={location} key={location.pathname}>
-            <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
-            <Route path="/register" element={<PageTransition><Register /></PageTransition>} />
-            
-            <Route element={<ProtectedRoute allowedRoles={["admin", "teacher", "student"]} />}>
-              <Route path="/" element={<PageTransition><Dashboard /></PageTransition>} />
-              <Route path="/my-content" element={<PageTransition><StudentContent /></PageTransition>} />
-            </Route>
+            <Suspense fallback={<LoadingFallback />}>
+              <Routes location={location} key={location.pathname}>
+                <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
+                <Route path="/register" element={<PageTransition><Register /></PageTransition>} />
+                
+                <Route element={<ProtectedRoute allowedRoles={["admin", "teacher", "student"]} />}>
+                  <Route path="/" element={<PageTransition><Dashboard /></PageTransition>} />
+                  <Route path="/my-content" element={<PageTransition><StudentContent /></PageTransition>} />
+                </Route>
 
-            <Route element={<ProtectedRoute allowedRoles={["teacher"]} />}>
-              <Route path="/teacher-classes" element={<PageTransition><TeacherClasses /></PageTransition>} />
-              <Route path="/teacher-notes" element={<PageTransition><TeacherNotes /></PageTransition>} />
-            </Route>
+                <Route element={<ProtectedRoute allowedRoles={["teacher"]} />}>
+                  <Route path="/teacher-classes" element={<PageTransition><TeacherClasses /></PageTransition>} />
+                  <Route path="/teacher-notes" element={<PageTransition><TeacherNotes /></PageTransition>} />
+                </Route>
 
-            <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
-              <Route path="/admin-teacher-classes" element={<PageTransition><AdminTeacherClasses /></PageTransition>} />
-              <Route path="/students" element={<PageTransition><Students /></PageTransition>} />
-              <Route path="/face-registration" element={<PageTransition><FaceRegistration /></PageTransition>} />
-              <Route path="/addStudent" element={<PageTransition><AddStudent /></PageTransition>} />
-              <Route path="/attendance" element={<PageTransition><Attendance /></PageTransition>} />
-              <Route path="/courses" element={<PageTransition><Courses /></PageTransition>} />
-              <Route path="/fees" element={<PageTransition><Fees /></PageTransition>} />
-            </Route>
-          </Routes>
-        </AnimatePresence>
+                <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+                  <Route path="/admin-teacher-classes" element={<PageTransition><AdminTeacherClasses /></PageTransition>} />
+                  <Route path="/students" element={<PageTransition><Students /></PageTransition>} />
+                  <Route path="/face-registration" element={<PageTransition><FaceRegistration /></PageTransition>} />
+                  <Route path="/addStudent" element={<PageTransition><AddStudent /></PageTransition>} />
+                  <Route path="/attendance" element={<PageTransition><Attendance /></PageTransition>} />
+                  <Route path="/courses" element={<PageTransition><Courses /></PageTransition>} />
+                  <Route path="/fees" element={<PageTransition><Fees /></PageTransition>} />
+                </Route>
+              </Routes>
+            </Suspense>
+          </AnimatePresence>
         
         {!isAuthPage && (
           <>

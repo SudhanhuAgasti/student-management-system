@@ -104,13 +104,30 @@ function Students() {
               className="divide-y divide-slate-100/50"
             >
               {loading ? (
-                <tr>
-                  <td colSpan="4" className="px-8 py-12 text-center text-slate-500 font-medium text-lg">
-                    <div className="flex items-center justify-center gap-3">
-                      <Sparkles className="animate-spin text-indigo-400" /> Loading student records...
-                    </div>
-                  </td>
-                </tr>
+                <>
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <tr key={i} className="animate-pulse border-b border-slate-100/50 last:border-0">
+                      <td className="px-8 py-5 whitespace-nowrap">
+                        <div className="flex items-center gap-4">
+                          <div className="h-12 w-12 rounded-2xl bg-slate-200 dark:bg-slate-700"></div>
+                          <div className="h-6 w-48 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                        </div>
+                      </td>
+                      <td className="px-8 py-5 whitespace-nowrap">
+                         <div className="h-5 w-32 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                      </td>
+                      <td className="px-8 py-5 whitespace-nowrap">
+                         <div className="h-5 w-24 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                      </td>
+                      <td className="px-8 py-5 whitespace-nowrap">
+                         <div className="h-8 w-24 bg-slate-200 dark:bg-slate-700 rounded-xl"></div>
+                      </td>
+                      <td className="px-8 py-5 whitespace-nowrap text-right flex justify-end">
+                         <div className="h-10 w-10 bg-slate-200 dark:bg-slate-700 rounded-xl"></div>
+                      </td>
+                    </tr>
+                  ))}
+                </>
               ) : filteredStudents.length === 0 ? (
                 <tr>
                   <td colSpan="4" className="px-8 py-16 text-center text-slate-500 font-medium text-lg">

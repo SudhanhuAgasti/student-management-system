@@ -1,5 +1,6 @@
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
+import { BASE_URL } from "../services/api";
 
 export const generateFeeReceipt = (data) => {
   const doc = new jsPDF();
@@ -173,14 +174,17 @@ export const generatePerformanceCard = async (student, stats) => {
   let avatarSize = 35;
 
   if (student.profilePic) {
-    const imgUrl = `http://localhost:5000${student.profilePic}`;
+    let imgUrl = student.profilePic;
+    if (!imgUrl.startsWith('http') && !imgUrl.startsWith('data:')) {
+      imgUrl = `${BASE_URL}${imgUrl}`;
+    }
     const img = await loadImage(imgUrl);
     if (img) {
       // Draw a frame for the photo
       doc.setDrawColor(99, 102, 241);
       doc.setLineWidth(1);
       doc.rect(avatarX - 2, avatarY - 2, avatarSize + 4, avatarSize + 4);
-      doc.addImage(img, "JPEG", avatarX, avatarY, avatarSize, avatarSize);
+      doc.addImage(img, "PNG", avatarX, avatarY, avatarSize, avatarSize, undefined, 'FAST');
     }
   } else {
     // Placeholder if no photo

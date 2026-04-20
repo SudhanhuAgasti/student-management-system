@@ -18,7 +18,7 @@ function FaceRegistration() {
       const MODEL_URL = "/models";
       try {
         await Promise.all([
-          faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
+          faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
           faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
           faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
         ]);
@@ -53,6 +53,9 @@ function FaceRegistration() {
     setLoading(true);
     setStatus({ type: "info", message: "Detecting face..." });
 
+    // Give the browser a moment to paint the loading spinner before heavy AI computation starts
+    await new Promise(resolve => setTimeout(resolve, 100));
+
     try {
       const imageSrc = webcamRef.current.getScreenshot();
       if (!imageSrc) throw new Error("Capture failed. Browser blocked camera frame access or camera was interrupted.");
@@ -60,7 +63,7 @@ function FaceRegistration() {
       const img = await faceapi.fetchImage(imageSrc);
       
       const detection = await faceapi
-        .detectSingleFace(img)
+        .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 }))
         .withFaceLandmarks()
         .withFaceDescriptor();
 

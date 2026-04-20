@@ -31,6 +31,13 @@ const studentSchema = new mongoose.Schema({
     maxlength: 10
   },
 
+  parentPhone: {
+    type: String,
+    required: [true, "Parents WhatsApp Number is mandatory!"],
+    minlength: 10,
+    maxlength: 10
+  },
+
   course: String,
 
   feesPaid: {

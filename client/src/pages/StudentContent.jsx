@@ -5,7 +5,7 @@ import {
   Calendar, Clock, ShieldCheck, GraduationCap
 } from "lucide-react";
 
-import API_INSTANCE from "../services/api";
+import API_INSTANCE, { BASE_URL } from "../services/api";
 
 function StudentContent() {
   const [content, setContent] = useState({ notes: [], onlineClasses: [] });
@@ -29,9 +29,71 @@ function StudentContent() {
 
   if (isLoading) {
     return (
-      <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
-        <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-        <p className="font-bold text-slate-400 animate-pulse text-xs uppercase tracking-widest">Loading Your Materials...</p>
+      <div className="space-y-10 pb-12 animate-pulse">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-4 border-b border-slate-100 dark:border-slate-800">
+          <div className="flex-1">
+            <div className="h-4 w-40 bg-slate-200 dark:bg-slate-800 rounded mb-3"></div>
+            <div className="h-10 w-80 bg-slate-200 dark:bg-slate-800 rounded-lg mb-4"></div>
+            <div className="h-5 w-full max-w-2xl bg-slate-200 dark:bg-slate-800 rounded"></div>
+          </div>
+        </div>
+
+        {/* Online Classes Skeleton */}
+        <section className="space-y-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-slate-200 dark:bg-slate-800"></div>
+            <div className="h-8 w-40 bg-slate-200 dark:bg-slate-800 rounded"></div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white dark:bg-[#111827] rounded-3xl p-6 lg:p-7 border border-slate-100 dark:border-slate-800 shadow-sm space-y-4">
+                 <div className="h-6 w-3/4 bg-slate-200 dark:bg-slate-800 rounded mb-4"></div>
+                 <div className="space-y-3 mb-8">
+                    <div className="flex items-center gap-3">
+                       <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800"></div>
+                       <div className="h-4 w-1/2 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                       <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800"></div>
+                       <div className="h-4 w-1/3 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                       <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800"></div>
+                       <div className="h-4 w-1/4 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                    </div>
+                 </div>
+                 <div className="w-full h-12 bg-slate-200 dark:bg-slate-800 rounded-2xl"></div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Notes Skeleton */}
+        <section className="space-y-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-slate-200 dark:bg-slate-800"></div>
+            <div className="h-8 w-48 bg-slate-200 dark:bg-slate-800 rounded"></div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white dark:bg-[#111827] rounded-3xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="w-12 h-12 rounded-2xl bg-slate-200 dark:bg-slate-800"></div>
+                  <div className="h-5 w-20 bg-slate-200 dark:bg-slate-800 rounded-md"></div>
+                </div>
+                <div className="h-6 w-3/4 bg-slate-200 dark:bg-slate-800 rounded mb-2"></div>
+                <div className="h-4 w-1/2 bg-slate-200 dark:bg-slate-800 rounded mb-3"></div>
+                <div className="space-y-2 mb-4 h-10">
+                   <div className="h-4 w-full bg-slate-200 dark:bg-slate-800 rounded"></div>
+                   <div className="h-4 w-2/3 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                </div>
+                <div className="h-4 w-32 bg-slate-200 dark:bg-slate-800 rounded"></div>
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
     );
   }
@@ -146,9 +208,10 @@ function StudentContent() {
                   <p className="text-sm text-slate-500 line-clamp-2 mb-4 h-10">{note.description}</p>
                 )}
                 <a
-                  href={note.fileUrl.startsWith('http') ? note.fileUrl : `http://localhost:5000${note.fileUrl}`}
+                  href={note.fileUrl.startsWith('http') ? note.fileUrl : `${BASE_URL}${note.fileUrl}`}
                   target="_blank"
                   rel="noreferrer"
+                  download
                   className="inline-flex items-center gap-2 text-xs font-black text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 underline underline-offset-4"
                 >
                   <Download size={14} /> Download PDF

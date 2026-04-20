@@ -8,7 +8,8 @@ function AddStudent() {
     phone: "",
     rollNumber: "",
     course: "",
-    totalFees: ""
+    totalFees: "",
+    parentPhone: ""
   });
   const [courses, setCourses] = useState([]);
   const [status, setStatus] = useState({ message: "", type: "" });
@@ -49,7 +50,7 @@ function AddStudent() {
         type: "success",
         showFaceBtn: true
       });
-      setStudent({ name: "", phone: "", rollNumber: "", course: "", totalFees: "" });
+      setStudent({ name: "", phone: "", rollNumber: "", course: "", totalFees: "", parentPhone: "" });
     } catch (err) {
       console.error(err);
       setStatus({ message: err.response?.data?.message || "Failed to add student.", type: "error" });
@@ -135,6 +136,21 @@ function AddStudent() {
                   placeholder="e.g. CS2024001"
                   onChange={handleChange}
                   className="w-full pl-14 pr-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-950 transition-all text-slate-800 dark:text-white font-bold"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-3 md:col-span-2">
+              <label className="text-sm font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest ml-1">Parent's WhatsApp Number (Mandatory)</label>
+              <div className="relative group">
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
+                <input
+                  name="parentPhone"
+                  value={student.parentPhone}
+                  required
+                  placeholder="For Automated Attendance Alerts"
+                  onChange={handleChange}
+                  className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-950 transition-all text-slate-800 dark:text-white font-bold"
                 />
               </div>
             </div>

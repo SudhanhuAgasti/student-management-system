@@ -14,7 +14,9 @@ import {
   XCircle,
   Clock,
   Download,
-  Search
+  Search,
+  BellRing,
+  MessageCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { generateAttendanceReport } from "../utils/pdfGenerator";
@@ -50,7 +52,7 @@ function Attendance() {
       const MODEL_URL = "/models";
       try {
         await Promise.all([
-          faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
+          faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
           faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
           faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
         ]);
@@ -92,6 +94,27 @@ function Attendance() {
       });
   };
 
+  const handleNotifyWhatsApp = (student) => {
+    const name = student.name;
+    const phone = student.parentPhone;
+    
+    if (!phone) {
+        alert("Parent's WhatsApp number not found for this student.");
+        return;
+    }
+
+    const header = `🚨 *ATTENDANCE ALERT | EduCore* 🚨%0A%0A`;
+    const englishMsg = `*Dear Parent*,%0AYour child, *${name}*, has NOT marked their attendance today. Please ensure they attend classes regularly. Continuous absence can lead to learning gaps and cause significant disturbance in upcoming exams.`;
+    const hindiMsg = `%0A%0A*प्रिय अभिभावक*,%0Aआपके बच्चे, *${name}*, ने आज अपनी उपस्थिति दर्ज नहीं की है। कृपया सुनिश्चित करें कि वे नियमित रूप से कक्षाओं में उपस्थित हों। लगातार अनुपस्थिति से सीखने में कमी आ सकती है और आगामी परीक्षाओं में भी बाधा उत्पन्न हो सकती है।`;
+    const odiaMsg = `%0A%0A*ପ୍ରିୟ ଅଭିଭାବକ*,%0Aଆପଣଙ୍କ ସନ୍ତାନ *${name}*, ଆଜି ନିଜର ଉପସ୍ଥିତି ଦର୍ଶାଇ ନାହାଁନ୍ତି | ଦୟାକରି ସେମାନେ ନିୟମିତ ଶ୍ରେଣୀରେ ଯୋଗଦେବା ନିଶ୍ଚିତ କରନ୍ତୁ | କ୍ରମାଗତ ଅନୁପସ୍ଥିତି ଶିକ୍ଷାରେ ବ୍ୟାଘାତ ସୃଷ୍ଟି କରିପାରେ ଏବଂ ଆଗାମୀ ପରୀକ୍ଷାରେ ଅସୁବିଧା ସୃଷ୍ଟି କରିପାରେ |`;
+    const footer = `%0A%0A_Regards,_%0A*Management, EduCore*`;
+
+    const fullMessage = `${header}${englishMsg}${hindiMsg}${odiaMsg}${footer}`;
+    const whatsappUrl = `https://wa.me/91${phone}?text=${fullMessage}`;
+    
+    window.open(whatsappUrl, "_blank");
+  };
+
   const handleRecognize = async () => {
     if (!webcamRef.current || !webcamRef.current.video) {
         setRecognitionResult({ type: "error", message: "Camera system not initialized yet. Please wait." });
@@ -107,13 +130,16 @@ function Attendance() {
     setIsRecognitionLoading(true);
     setRecognitionResult(null);
 
+    // Give the browser a moment to paint the loading spinner before heavy AI computation starts
+    await new Promise(resolve => setTimeout(resolve, 100));
+
     try {
       const imageSrc = webcamRef.current.getScreenshot();
       if (!imageSrc) throw new Error("Capture failed. Browser blocked camera frame access or camera was interrupted.");
 
       const img = await faceapi.fetchImage(imageSrc);
       const detection = await faceapi
-        .detectSingleFace(img)
+        .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 }))
         .withFaceLandmarks()
         .withFaceDescriptor();
 
@@ -133,7 +159,8 @@ function Attendance() {
       setTimeout(() => setRecognitionResult(null), 5000);
 
     } catch (err) {
-      console.error(err);
+      // Intentionally not logging the full error to avoid console clutter 
+      // since 403 business logic errors (like time limit) are expected.
       const errorMessage = err.response?.data?.msg || err.message || "Recognition failed";
       setRecognitionResult({ type: "error", message: errorMessage });
     } finally {
@@ -313,27 +340,43 @@ function Attendance() {
         {/* Right Col: Logs History */}
         <div className="lg:col-span-7">
           <div className="border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-800 rounded-4xl shadow-2xl overflow-hidden p-2 min-h-200">
-            <div className="p-6 flex items-center justify-between border-b border-slate-50 dark:border-slate-700/50">
-               <div className="flex items-center gap-6">
-                 <h2 className="text-xl font-black text-slate-800 dark:text-white flex items-center gap-3">
+            <div className="p-4 md:p-6 flex flex-col sm:flex-row items-center justify-between border-b border-slate-50 dark:border-slate-700/50 gap-4">
+               <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 w-full sm:w-auto">
+                 <h2 className="text-lg md:text-xl font-black text-slate-800 dark:text-white flex items-center gap-3">
                    <History size={24} className="text-teal-500" />
                    Engagement Logs
                  </h2>
                  <button 
                    onClick={() => generateAttendanceReport(attendance[0]?.studentId || { name: "Group", course: "Attendance" }, attendance)}
-                   className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md shadow-emerald-500/20"
+                   className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md shadow-emerald-500/20 w-full sm:w-auto justify-center"
                  >
                    <Download size={14} /> Export Table PDF
                  </button>
+
+                 {userRole === "admin" && (
+                   <button 
+                     onClick={async () => {
+                       try {
+                         const res = await API.post("/attendance/trigger-reminders");
+                         alert(res.data.msg);
+                       } catch (err) {
+                         alert("Failed to trigger alerts: " + (err.response?.data?.error || err.message));
+                       }
+                     }}
+                     className="flex items-center gap-2 px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md shadow-rose-500/20 w-full sm:w-auto justify-center"
+                   >
+                     <BellRing size={14} /> Send Absence Alerts
+                   </button>
+                 )}
                </div>
-               <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 dark:bg-slate-900 px-3 py-1 rounded-full">
+               <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 dark:bg-slate-900 px-3 py-1 rounded-full whitespace-nowrap">
                  {attendance.length} Records Found
                </div>
             </div>
             
-            <div className="overflow-hidden bg-slate-50 dark:bg-slate-900/50">
-              <div className="max-h-180 overflow-y-auto scrollbar-hide">
-                <table className="w-full text-left border-collapse relative min-w-150">
+            <div className="overflow-x-auto bg-slate-50 dark:bg-slate-900/50 custom-scrollbar-hide">
+              <div className="max-h-180 overflow-y-auto min-w-[600px]">
+                <table className="w-full text-left border-collapse relative">
                   <thead className="sticky top-0 z-20">
                     <tr className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md shadow-sm border-b border-slate-100 dark:border-slate-700">
                       <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Digital Snapshot</th>
@@ -349,13 +392,24 @@ function Attendance() {
                     className="divide-y divide-slate-100 dark:divide-slate-800/50"
                   >
                     {loading ? (
-                      <tr>
-                        <td colSpan="3" className="px-8 py-16 text-center text-slate-500 font-medium text-lg">
-                          <div className="flex items-center justify-center gap-3">
-                            <Sparkles className="animate-spin text-teal-400" /> Synchronizing ledgers...
-                          </div>
-                        </td>
-                      </tr>
+                      <>
+                        {[1, 2, 3, 4].map((i) => (
+                           <tr key={i} className="animate-pulse border-b border-slate-100 dark:border-slate-800/50">
+                             <td className="px-8 py-5">
+                               <div className="w-12 h-12 rounded-xl bg-slate-200 dark:bg-slate-700"></div>
+                             </td>
+                             <td className="px-8 py-5">
+                               <div className="flex flex-col gap-2">
+                                 <div className="h-5 w-32 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                                 <div className="h-3 w-20 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                               </div>
+                             </td>
+                             <td className="px-8 py-5 text-right flex justify-end">
+                               <div className="h-6 w-20 bg-slate-200 dark:bg-slate-700 rounded-xl"></div>
+                             </td>
+                           </tr>
+                         ))}
+                      </>
                     ) : attendance.length === 0 ? (
                       <tr>
                         <td colSpan="3" className="px-8 py-16 text-center text-slate-500 font-medium text-lg">
@@ -392,14 +446,26 @@ function Attendance() {
                           </td>
 
                           <td className="px-8 py-5 text-right">
-                            <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm border ${
-                              a.status === "Present"
-                                ? "bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/10 dark:border-emerald-500/20 dark:text-emerald-400"
-                                : "bg-red-50 text-red-600 border-red-100 dark:bg-red-500/10 dark:border-red-500/20 dark:text-red-400"
-                            }`}>
-                              {a.status}
-                            </span>
-                          </td>
+                             <div className="flex items-center justify-end gap-3">
+                               <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm border ${
+                                 a.status === "Present"
+                                   ? "bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/10 dark:border-emerald-500/20 dark:text-emerald-400"
+                                   : "bg-red-50 text-red-600 border-red-100 dark:bg-red-500/10 dark:border-red-500/20 dark:text-red-400"
+                               }`}>
+                                 {a.status}
+                               </span>
+                               
+                               {a.status === "Absent" && userRole === "admin" && (
+                                 <button
+                                   onClick={() => handleNotifyWhatsApp(a.studentId)}
+                                   className="p-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all shadow-md shadow-green-500/20 group/wa"
+                                   title="Notify Parent on WhatsApp"
+                                 >
+                                   <MessageCircle size={14} className="group-hover/wa:rotate-12 transition-transform" />
+                                 </button>
+                               )}
+                             </div>
+                           </td>
                         </motion.tr>
                       ))
                     )}

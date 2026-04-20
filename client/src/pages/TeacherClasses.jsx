@@ -156,9 +156,77 @@ function TeacherClasses() {
 
   if (isLoading) {
     return (
-      <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
-        <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-        <p className="font-bold text-slate-400 animate-pulse text-xs uppercase tracking-widest">Loading Classes...</p>
+      <div className="space-y-8 pb-12 animate-pulse">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div>
+            <div className="h-10 w-64 bg-slate-200 dark:bg-slate-800 rounded-lg mb-4"></div>
+            <div className="h-4 w-48 bg-slate-200 dark:bg-slate-800 rounded"></div>
+          </div>
+          <div className="h-12 w-36 bg-slate-200 dark:bg-slate-800 rounded-2xl"></div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Classes List Skeleton */}
+          <div className="lg:col-span-1 space-y-4">
+            <div className="h-4 w-24 bg-slate-200 dark:bg-slate-800 rounded mb-4"></div>
+            {[1, 2].map((i) => (
+              <div key={i} className="p-5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm space-y-3">
+                <div className="flex justify-between items-start">
+                  <div className="h-6 w-32 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                  <div className="h-6 w-6 bg-slate-200 dark:bg-slate-800 rounded-md"></div>
+                </div>
+                <div className="h-4 w-24 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                <div className="h-4 w-20 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                  <div className="h-4 w-24 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                  <div className="h-4 w-4 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Selected Class Detail View Skeleton */}
+          <div className="lg:col-span-2">
+            <div className="bg-white dark:bg-slate-900 rounded-4xl p-6 sm:p-8 shadow-sm border border-slate-100 dark:border-slate-800 h-full space-y-8">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
+                <div className="space-y-3">
+                  <div className="h-8 w-48 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                  <div className="flex gap-4">
+                    <div className="h-4 w-24 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                    <div className="h-4 w-24 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                  </div>
+                </div>
+                <div className="h-10 w-32 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
+              </div>
+
+              {/* Online Classes Skeleton */}
+              <div className="p-6 bg-slate-50 dark:bg-slate-800/40 rounded-3xl border border-slate-100 dark:border-slate-800 space-y-4">
+                 <div className="flex justify-between items-center">
+                    <div className="h-5 w-40 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                    <div className="h-4 w-24 bg-slate-200 dark:bg-slate-700 rounded"></div>
+                 </div>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="h-16 bg-white dark:bg-slate-800 rounded-2xl"></div>
+                    <div className="h-16 bg-white dark:bg-slate-800 rounded-2xl"></div>
+                 </div>
+              </div>
+              
+              {/* Table Skeleton */}
+               <div className="space-y-4">
+                 <div className="h-8 w-full bg-slate-50 dark:bg-slate-800 rounded-md"></div>
+                 {[1, 2, 3].map((i) => (
+                    <div key={i} className="flex justify-between items-center">
+                       <div className="h-5 w-8 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                       <div className="h-5 w-32 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                       <div className="h-5 w-24 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                       <div className="h-6 w-16 bg-slate-200 dark:bg-slate-800 rounded-lg"></div>
+                       <div className="h-8 w-8 bg-slate-200 dark:bg-slate-800 rounded-lg"></div>
+                    </div>
+                 ))}
+               </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

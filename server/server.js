@@ -14,6 +14,7 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 const authRoutes = require("./routes/authRoutes");
 const teacherRoutes = require("./routes/teacherRoutes");
 const noticeRoutes = require("./routes/noticeRoutes");
+const { initAbsenceReminderJob } = require("./services/absenceReminder");
 
 const authMiddleware = require("./middleware/authMiddleware");
 const { errorHandler } = require("./middleware/errorMiddleware");
@@ -21,6 +22,7 @@ const { errorHandler } = require("./middleware/errorMiddleware");
 const app = express();
 
 connectDB();
+initAbsenceReminderJob();
 
 app.use(cors());
 app.use(express.json());

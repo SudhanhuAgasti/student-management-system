@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import API from "../services/api";
+import API, { BASE_URL } from "../services/api";
 import { motion } from "framer-motion";
 import { 
   FileText, UploadCloud, Trash2, Download, BookOpen, AlertCircle
@@ -92,9 +92,54 @@ function TeacherNotes() {
 
   if (isLoading) {
     return (
-      <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
-        <div className="w-12 h-12 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin"></div>
-        <p className="font-bold text-slate-400 animate-pulse text-xs uppercase tracking-widest">Loading Materials...</p>
+      <div className="space-y-8 pb-12 animate-pulse">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div>
+            <div className="h-3 w-32 bg-slate-200 dark:bg-slate-800 rounded mb-4"></div>
+            <div className="h-10 w-64 bg-slate-200 dark:bg-slate-800 rounded-lg mb-4"></div>
+            <div className="h-4 w-96 max-w-full bg-slate-200 dark:bg-slate-800 rounded"></div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-1">
+            <div className="bg-white dark:bg-[#111827] rounded-4xl p-8 border border-slate-100 dark:border-slate-800 shadow-sm sticky top-6 space-y-6">
+               <div className="h-6 w-48 bg-slate-200 dark:bg-slate-800 rounded"></div>
+               <div className="space-y-4">
+                 <div className="h-12 w-full bg-slate-200 dark:bg-slate-800 rounded-2xl"></div>
+                 <div className="h-12 w-full bg-slate-200 dark:bg-slate-800 rounded-2xl"></div>
+                 <div className="h-24 w-full bg-slate-200 dark:bg-slate-800 rounded-2xl"></div>
+                 <div className="h-12 w-full bg-slate-200 dark:bg-slate-800 rounded-2xl"></div>
+                 <div className="h-14 w-full bg-slate-200 dark:bg-slate-800 rounded-2xl mt-4"></div>
+               </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-2 space-y-6">
+            <div className="flex items-center justify-between mb-4">
+               <div className="h-6 w-48 bg-slate-200 dark:bg-slate-800 rounded"></div>
+               <div className="h-6 w-16 bg-slate-200 dark:bg-slate-800 rounded-lg"></div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+               {[1, 2, 3, 4].map((i) => (
+                 <div key={i} className="bg-white dark:bg-[#111827] rounded-3xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col space-y-4">
+                    <div className="flex justify-between items-start">
+                       <div className="h-12 w-12 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
+                       <div className="h-8 w-8 bg-slate-200 dark:bg-slate-800 rounded-lg"></div>
+                    </div>
+                    <div className="h-5 w-48 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                    <div className="h-4 w-24 bg-slate-200 dark:bg-slate-800 rounded-md"></div>
+                    <div className="h-10 w-full bg-slate-200 dark:bg-slate-800 rounded mt-2"></div>
+                    <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                       <div className="h-3 w-20 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                       <div className="h-6 w-24 bg-slate-200 dark:bg-slate-800 rounded-lg"></div>
+                    </div>
+                 </div>
+               ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -254,9 +299,10 @@ function TeacherNotes() {
                     </span>
                     
                     <a 
-                      href={note.fileUrl.startsWith('http') ? note.fileUrl : `http://localhost:5000${note.fileUrl}`} 
+                      href={note.fileUrl.startsWith('http') ? note.fileUrl : `${BASE_URL}${note.fileUrl}`} 
                       target="_blank" 
                       rel="noopener noreferrer"
+                      download
                       className="flex items-center gap-2 text-xs font-bold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-500/10 px-3 py-1.5 rounded-lg hover:bg-teal-100 dark:hover:bg-teal-500/20 transition-colors"
                     >
                       <Download size={14} /> View File

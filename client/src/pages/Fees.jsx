@@ -107,9 +107,67 @@ function Fees() {
 
       <div className="glass border-0 bg-white/60 dark:bg-slate-800/60 rounded-[3rem] shadow-2xl overflow-hidden backdrop-blur-xl p-4 min-h-100">
         {loading ? (
-          <div className="flex justify-center items-center h-64 text-slate-500 font-medium text-lg gap-3">
-            <Sparkles className="animate-spin text-emerald-400" /> Fetching latest financial data...
-          </div>
+          activeTab === "pending" ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 animate-pulse">
+              {[1, 2, 3, 4, 5, 6].map(i => (
+                <div key={i} className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm space-y-6">
+                   <div className="flex justify-between items-start">
+                      <div className="space-y-2">
+                        <div className="h-6 w-32 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                        <div className="h-3 w-16 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                      </div>
+                      <div className="h-8 w-16 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
+                   </div>
+                   <div className="space-y-3">
+                      <div className="flex justify-between">
+                         <div className="h-4 w-16 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                         <div className="h-4 w-12 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                      </div>
+                      <div className="flex justify-between">
+                         <div className="h-4 w-20 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                         <div className="h-4 w-12 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                      </div>
+                   </div>
+                   <div className="flex gap-2 pt-2">
+                      <div className="h-10 flex-1 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
+                      <div className="h-10 flex-1 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
+                   </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="overflow-x-auto rounded-3xl bg-white/40 custom-scrollbar-hide animate-pulse">
+              <table className="w-full text-left border-collapse min-w-175">
+                 <thead>
+                   <tr className="border-b border-slate-200/60 bg-white/50">
+                     <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest">Student Information</th>
+                     <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest">Amount Paid</th>
+                     <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest">Transaction Date</th>
+                     <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest text-right">Receipt</th>
+                   </tr>
+                 </thead>
+                 <tbody className="divide-y divide-slate-100/50">
+                   {[1, 2, 3, 4, 5].map(i => (
+                     <tr key={i}>
+                       <td className="px-8 py-5">
+                          <div className="h-5 w-32 bg-slate-200 dark:bg-slate-800 rounded mb-2"></div>
+                          <div className="h-4 w-24 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                       </td>
+                       <td className="px-8 py-5">
+                          <div className="h-8 w-24 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
+                       </td>
+                       <td className="px-8 py-5">
+                          <div className="h-8 w-24 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
+                       </td>
+                       <td className="px-8 py-5 text-right flex justify-end">
+                          <div className="h-10 w-10 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
+                       </td>
+                     </tr>
+                   ))}
+                 </tbody>
+              </table>
+            </div>
+          )
         ) : activeTab === "pending" ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
             {pendingStudents.length === 0 ? (
@@ -156,7 +214,7 @@ function Fees() {
                         </button>
 
                         <a
-                          href={`https://wa.me/${student.phone}?text=${encodeURIComponent(message)}`}
+                          href={`https://wa.me/91${student.phone}?text=${encodeURIComponent(message)}`}
                           target="_blank"
                           rel="noreferrer"
                           className="flex-1 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-sm shadow-green-500/20"

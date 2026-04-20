@@ -136,8 +136,10 @@ function Courses() {
       )}
 
       {loading ? (
-        <div className="flex justify-center items-center py-20 text-slate-500 font-medium text-lg gap-3">
-          <Sparkles className="animate-spin text-orange-400" /> Loading course details...
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-pulse">
+           {[1, 2, 3].map(i => (
+             <div key={i} className="bg-slate-200 dark:bg-slate-800 rounded-4xl h-80"></div>
+           ))}
         </div>
       ) : courses.length === 0 ? (
         <div className="glass p-12 rounded-4xl text-center text-slate-500 text-lg font-medium shadow-sm">

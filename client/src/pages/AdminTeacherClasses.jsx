@@ -69,9 +69,42 @@ function AdminTeacherClasses() {
 
   if (isLoading) {
     return (
-      <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
-        <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-        <p className="font-bold text-slate-400 animate-pulse text-xs uppercase tracking-widest">Loading Teacher Insights...</p>
+      <div className="space-y-8 pb-12 animate-pulse">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div>
+            <div className="h-3 w-32 bg-slate-200 dark:bg-slate-800 rounded mb-2"></div>
+            <div className="h-10 w-72 bg-slate-200 dark:bg-slate-800 rounded-lg mb-4"></div>
+            <div className="h-4 w-96 max-w-full bg-slate-200 dark:bg-slate-800 rounded"></div>
+          </div>
+          <div className="h-16 w-32 bg-slate-200 dark:bg-slate-800 rounded-2xl"></div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-12">
+          {[1, 2].map(i => (
+            <div key={i} className="bg-white dark:bg-[#111827] rounded-4xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
+               <div className="bg-slate-50/50 dark:bg-slate-800/20 p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6">
+                 <div className="w-20 h-20 bg-slate-200 dark:bg-slate-800 rounded-3xl shrink-0"></div>
+                 <div className="flex-1 space-y-3 w-full">
+                    <div className="h-6 w-48 bg-slate-200 dark:bg-slate-800 rounded mx-auto sm:mx-0"></div>
+                    <div className="h-4 w-64 bg-slate-200 dark:bg-slate-800 rounded mx-auto sm:mx-0"></div>
+                 </div>
+                 <div className="flex gap-4">
+                    <div className="h-16 w-24 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
+                    <div className="h-16 w-24 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
+                 </div>
+                 <div className="sm:ml-4 pl-4 sm:border-l border-slate-200 dark:border-slate-700 w-full sm:w-auto mt-4 sm:mt-0">
+                    <div className="h-3 w-24 bg-slate-200 dark:bg-slate-800 rounded mb-2"></div>
+                    <div className="h-16 w-full sm:w-48 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
+                 </div>
+               </div>
+               <div className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {[1, 2, 3].map(j => (
+                    <div key={j} className="h-48 bg-slate-200 dark:bg-slate-800 rounded-2xl"></div>
+                  ))}
+               </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

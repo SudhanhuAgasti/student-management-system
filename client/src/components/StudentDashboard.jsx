@@ -6,7 +6,7 @@ import {
   Clock, CheckCircle2, AlertCircle, ArrowRight, Presentation, Camera, Eye, X
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import API from "../services/api";
+import API, { BASE_URL } from "../services/api";
 import NoticeBoard from "./NoticeBoard";
 import BroadcastBanner from "../components/BroadcastBanner";
 import { generatePerformanceCard } from "../utils/pdfGenerator";
@@ -23,6 +23,13 @@ function StudentDashboard({ data }) {
     const file = e.target.files[0];
     if (!file) return;
 
+    // Optimistic UI: Show local preview immediately
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setStudent(prev => ({ ...prev, profilePic: reader.result }));
+    };
+    reader.readAsDataURL(file);
+
     const formData = new FormData();
     formData.append("image", file);
 
@@ -31,10 +38,10 @@ function StudentDashboard({ data }) {
       const res = await API.post("/student/profile-pic", formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
-      setStudent({ ...student, profilePic: res.data.profilePic });
-      alert("Profile picture updated!");
+      setStudent(prev => ({ ...prev, profilePic: res.data.profilePic }));
     } catch (err) {
       alert("Failed to upload image");
+      // Optionally reset to initial on failure
     } finally {
       setIsUploading(false);
     }
@@ -160,7 +167,7 @@ function StudentDashboard({ data }) {
                   <div className={`w-full h-full relative transition-all duration-300 ${showProfileOptions ? "blur-md scale-95" : ""}`}>
                     {student.profilePic ? (
                       <img
-                        src={student.profilePic.startsWith('http') ? student.profilePic : `http://localhost:5000${student.profilePic}`}
+                        src={student.profilePic.startsWith('http') ? student.profilePic : `${BASE_URL}${student.profilePic}`}
                         className="w-full h-full object-cover rounded-[1.4rem] border-2 border-white dark:border-slate-900 cursor-pointer shadow-inner"
                         alt="Profile"
                       />
@@ -239,7 +246,7 @@ function StudentDashboard({ data }) {
                     </button>
                     {student.profilePic ? (
                       <img
-                        src={student.profilePic.startsWith('http') ? student.profilePic : `http://localhost:5000${student.profilePic}`}
+                        src={student.profilePic.startsWith('http') ? student.profilePic : `${BASE_URL}${student.profilePic}`}
                         className="w-full h-full object-contain"
                         alt="Full Profile"
                       />
