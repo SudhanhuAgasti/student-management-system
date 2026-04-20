@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Menu, BookOpen } from "lucide-react";
 import Sidebar from "./components/Sidebar";
 import ProtectedRoute from "./components/ProtectedRoute";
+import TopNavbar from "./components/TopNavbar";
 
 import Dashboard from "./pages/Dashboard";
 import Students from "./pages/Students";
@@ -55,10 +56,10 @@ function AppContent() {
         </>
       )}
 
-      {/* Main Content Area */}
+       {/* Main Content Area  */}
       <div className={`flex-1 flex flex-col h-screen overflow-y-auto min-w-0 relative z-10 transition-all duration-300 ${!isAuthPage ? "w-full" : ""}`}>
         
-        {/* Mobile Top Bar */}
+        {/* Mobile Top Bar (sidebar toggle — md and below) */}
         {!isAuthPage && (
            <div className="md:hidden flex items-center justify-between p-4 bg-white/80 dark:bg-slate-900/80 border-b border-slate-200/50 dark:border-slate-700/50 z-30 sticky top-0 shadow-sm backdrop-blur-lg transition-colors">
              <div className="flex items-center gap-3">
@@ -74,6 +75,9 @@ function AppContent() {
              </button>
            </div>
         )}
+
+        {/* Global Top Navbar — theme toggle, logout, institute code */}
+        {!isAuthPage && <TopNavbar />}
 
         <div className={`flex-1 ${!isAuthPage ? "p-4 md:p-8 lg:p-10" : ""}`}>
           <AnimatePresence mode="wait">

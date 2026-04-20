@@ -11,8 +11,6 @@ import NoticeBoard from "./NoticeBoard";
 import BroadcastBanner from "../components/BroadcastBanner";
 import { generatePerformanceCard } from "../utils/pdfGenerator";
 import { Download } from "lucide-react";
-import ThemeToggle from "../components/ThemeToggle";
-import LogoutButton from "../components/LogoutButton";
 
 function StudentDashboard({ data }) {
   const { student: initialStudent, attendancePercentage, attendanceLogs, pendingFees, teacherName } = data;
@@ -47,21 +45,16 @@ function StudentDashboard({ data }) {
       <BroadcastBanner />
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-        <div className="flex items-start gap-4">
-          <div className="mt-1">
-            <ThemeToggle />
-          </div>
-          <div className="flex-1">
-            <p className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
-              Student Portal
-            </p>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
-              Welcome, <span className="text-indigo-600 dark:text-indigo-400">{student.name}</span> 👋
-            </h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-3 font-medium text-sm sm:text-base">
-              Track your academic progress and fee status.
-            </p>
-          </div>
+        <div>
+          <p className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
+            Student Portal
+          </p>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
+            Welcome, <span className="text-indigo-600 dark:text-indigo-400">{student.name}</span> 👋
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-3 font-medium text-sm sm:text-base">
+            Track your academic progress and fee status.
+          </p>
         </div>
         <div className="flex flex-col items-end gap-3">
           {teacherName && (
@@ -228,7 +221,7 @@ function StudentDashboard({ data }) {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-md"
+                  className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-md"
                   onClick={() => setShowViewModal(false)}
                 >
                   <motion.div
@@ -344,7 +337,6 @@ function StudentDashboard({ data }) {
       </div>
 
       <NoticeBoard />
-      <LogoutButton />
     </div>
   );
 }

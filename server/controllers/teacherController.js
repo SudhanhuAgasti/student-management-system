@@ -75,6 +75,32 @@ exports.updateTeacherPayment = async (req, res, next) => {
   }
 };
 
+exports.deleteTeacher = async (req, res, next) => {
+  try {
+    const adminId = req.user.id;
+    const { teacherId } = req.params;
+
+    // Verify the teacher belongs to this admin
+    const teacher = await Teacher.findOne({ _id: teacherId, adminId });
+    if (!teacher) {
+      return res.status(404).json({ message: "Teacher not found or not authorized." });
+    }
+
+    // Cascade delete: remove classes, notes, and online classes belonging to this teacher
+    await Class.deleteMany({ teacherId });
+    await Note.deleteMany({ teacherId });
+    await OnlineClass.deleteMany({ teacherId });
+
+    // Delete the teacher account
+    await Teacher.findByIdAndDelete(teacherId);
+
+    res.json({ message: "Teacher and all associated data removed successfully." });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
 exports.addClass = async (req, res, next) => {
   try {
     const teacherId = req.user.id;

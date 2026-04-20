@@ -3,7 +3,7 @@ import API from "../services/api";
 import { motion } from "framer-motion";
 import { 
   Users, BookOpen, Clock, Presentation, GraduationCap, X, User,
-  IndianRupee, TrendingDown, CheckCircle2
+  IndianRupee, TrendingDown, CheckCircle2, Trash2
 } from "lucide-react";
 
 function AdminTeacherClasses() {
@@ -54,6 +54,19 @@ function AdminTeacherClasses() {
     }
   };
 
+  const handleDeleteTeacher = async (teacherId, teacherName) => {
+    if (!window.confirm(`Are you sure you want to permanently remove ${teacherName} and all their associated classes?`)) {
+      return;
+    }
+    try {
+      await API.delete(`/admin/teachers/${teacherId}`);
+      fetchInstituteClasses();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete teacher.");
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
@@ -98,10 +111,18 @@ function AdminTeacherClasses() {
               key={teacher._id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white dark:bg-[#111827] rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden"
+              className="bg-white dark:bg-[#111827] rounded-4xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden"
             >
               {/* Teacher Header */}
-              <div className="bg-slate-50/50 dark:bg-slate-800/20 border-b border-slate-100 dark:border-slate-800 p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6">
+              <div className="bg-slate-50/50 dark:bg-slate-800/20 border-b border-slate-100 dark:border-slate-800 p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6 relative">
+                {/* Delete Button */}
+                <button 
+                  onClick={() => handleDeleteTeacher(teacher._id, teacher.name)}
+                  title="Remove Teacher"
+                  className="absolute top-4 right-4 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 p-2 rounded-xl transition-colors"
+                >
+                  <Trash2 size={20} />
+                </button>
                 <div className="w-20 h-20 bg-linear-to-br from-indigo-500 to-purple-600 rounded-3xl shadow-lg shadow-indigo-500/20 flex items-center justify-center shrink-0">
                   <User size={32} className="text-white" />
                 </div>
@@ -199,7 +220,7 @@ function AdminTeacherClasses() {
             initial={{ scale: 0.95, opacity: 0, y: 20 }} 
             animate={{ scale: 1, opacity: 1, y: 0 }} 
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
-            className="bg-white dark:bg-slate-900 rounded-[2rem] p-8 shadow-2xl relative z-10 w-full max-w-md border border-slate-100 dark:border-slate-800"
+            className="bg-white dark:bg-slate-900 rounded-4xl p-8 shadow-2xl relative z-10 w-full max-w-md border border-slate-100 dark:border-slate-800"
           >
             <button onClick={() => setShowPaymentModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors bg-slate-50 dark:bg-slate-800 p-2 rounded-full">
               <X size={20} />

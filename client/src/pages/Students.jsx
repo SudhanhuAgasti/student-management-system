@@ -87,7 +87,7 @@ function Students() {
 
       <div className="glass border-0 bg-white/60 rounded-4xlshadow-xl shadow-slate-200/50 overflow-hidden backdrop-blur-xl p-2">
         <div className="overflow-x-auto rounded-3xl bg-white/40 custom-scrollbar-hide">
-          <table className="w-full text-left border-collapse min-w-[700px]">
+          <table className="w-full text-left border-collapse min-w-175">
             <thead>
               <tr className="border-b border-slate-200/60 bg-white/50">
                 <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest">Student Name</th>

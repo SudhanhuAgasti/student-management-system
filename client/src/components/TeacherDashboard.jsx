@@ -5,29 +5,22 @@ import {
 } from "lucide-react";
 import NoticeBoard from "./NoticeBoard";
 import BroadcastBanner from "./BroadcastBanner";
-import ThemeToggle from "./ThemeToggle";
-import LogoutButton from "./LogoutButton";
 
 function TeacherDashboard({ data }) {
   return (
     <div className="space-y-8 pb-12">
       <BroadcastBanner />
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div className="flex items-start gap-4">
-          <div className="mt-1">
-            <ThemeToggle />
-          </div>
-          <div>
-            <p className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
-              Teacher Portal
-            </p>
-            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
-              Educator's <span className="text-indigo-600 dark:text-indigo-400">Panel</span> 🎓
-            </h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">
-              Manage your classes, students, and curriculum efficiently.
-            </p>
-          </div>
+        <div>
+          <p className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
+            Teacher Portal
+          </p>
+          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
+            Educator's <span className="text-indigo-600 dark:text-indigo-400">Panel</span> 🎓
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">
+            Manage your classes, students, and curriculum efficiently.
+          </p>
         </div>
         <div className="flex flex-col items-end gap-3">
           <div className="flex items-center gap-2 bg-white dark:bg-[#111827] border border-slate-100 dark:border-slate-800 rounded-2xl p-1.5 shadow-sm">
@@ -121,7 +114,6 @@ function TeacherDashboard({ data }) {
       </div>
 
       <NoticeBoard />
-      <LogoutButton />
     </div>
   );
 }

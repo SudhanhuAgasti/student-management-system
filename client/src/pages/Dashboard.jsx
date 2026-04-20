@@ -14,8 +14,6 @@ import {
 } from "recharts";
 import NoticeBoard from "../components/NoticeBoard";
 import BroadcastBanner from "../components/BroadcastBanner";
-import ThemeToggle from "../components/ThemeToggle";
-import LogoutButton from "../components/LogoutButton";
 
 const RADIAN = Math.PI / 180;
 
@@ -80,7 +78,11 @@ function Dashboard() {
     setIsLoading(true);
     API.get("/dashboard")
       .then(res => { 
-        setData(res.data); 
+        setData(res.data);
+        // Cache institute code for TopNavbar to read
+        if (res.data.instituteCode) {
+          localStorage.setItem("instituteCode", res.data.instituteCode);
+        }
         setIsLoading(false); 
       })
       .catch(() => setIsLoading(false));
@@ -183,16 +185,12 @@ function Dashboard() {
 
     
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div className="flex items-start gap-4">
-          <div className="mt-1">
-            <ThemeToggle />
-          </div>
-          <div>
-            <p className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
-              Admin Portal
-            </p>
+        <div>
+          <p className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
+            Admin Portal
+          </p>
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
-            Good {new Date().getHours() < 12 ? "Morning" : new Date().getHours() < 18 ? "Afternoon" : "Evening"}, {" "}
+            Good {new Date().getHours() < 12 ? "Morning" : new Date().getHours() < 18 ? "Afternoon" : "Evening"},{" "}
             <span className="text-indigo-600 dark:text-indigo-400">
               {localStorage.getItem("userName") || "Admin"}
             </span> 👋
@@ -201,12 +199,7 @@ function Dashboard() {
             Here's what's happening at your institute today.
           </p>
         </div>
-        </div>
         <div className="flex flex-col items-end gap-3">
-          <div className="flex items-center gap-2 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/30 rounded-2xl p-3 shadow-sm">
-            <div className="bg-indigo-500 text-white rounded-lg px-2.5 py-1 text-xs font-black tracking-widest">CODE</div>
-            <span className="text-lg font-black text-indigo-700 dark:text-indigo-400 tracking-widest uppercase">{data.instituteCode || "N/A"}</span>
-          </div>
           <div className="flex items-center gap-2 bg-white dark:bg-[#111827] border border-slate-100 dark:border-slate-800 rounded-2xl p-1.5 shadow-sm">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
             <span className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest pr-2">Live Data</span>
@@ -553,7 +546,6 @@ function Dashboard() {
         )}
       </AnimatePresence>
 
-      <LogoutButton />
     </div>
   );
 }

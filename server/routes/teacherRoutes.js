@@ -16,7 +16,8 @@ const {
   getOnlineClasses,
   createOnlineClass,
   deleteOnlineClass,
-  getStudentContent
+  getStudentContent,
+  deleteTeacher
 } = require("../controllers/teacherController");
 
 // Configure multer storage
@@ -25,6 +26,7 @@ const upload = uploadTeacherNote;
 
 router.get("/admin/institute-classes", authorizeRoles("admin"), getInstituteClasses);
 router.post("/admin/teacher-payment/:teacherId", authorizeRoles("admin"), updateTeacherPayment);
+router.delete("/admin/teachers/:teacherId", authorizeRoles("admin"), deleteTeacher);
 
 router.get("/teacher/classes", authorizeRoles("teacher"), getClasses);
 router.get("/teacher/notes", authorizeRoles("teacher"), getNotes);

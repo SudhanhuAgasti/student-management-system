@@ -161,7 +161,7 @@ function Attendance() {
           <input
             type="date"
             value={date}
-            className="flex-1 min-w-[150px] border-0 bg-transparent text-slate-800 dark:text-white font-bold focus:outline-none focus:ring-0 px-4 py-2"
+            className="flex-1 min-w-37.5 border-0 bg-transparent text-slate-800 dark:text-white font-bold focus:outline-none focus:ring-0 px-4 py-2"
             onChange={(e) => setDate(e.target.value)}
           />
           {userRole === "admin" && (
@@ -227,7 +227,7 @@ function Attendance() {
                    ) : (
                      <div className="flex flex-col items-center gap-4">
                        <Loader2 className="text-white/20 animate-spin" size={48} />
-                       <span className="text-white/50 font-bold uppercase tracking-widest text-[10px] tracking-tighter">Initializing AI Core</span>
+                       <span className="text-white/50 font-bold uppercase tracking-widest text-[10px] tracking-widest">Initializing AI Core</span>
                      </div>
                    )}
                    
@@ -333,7 +333,7 @@ function Attendance() {
             
             <div className="overflow-hidden bg-slate-50 dark:bg-slate-900/50">
               <div className="max-h-180 overflow-y-auto scrollbar-hide">
-                <table className="w-full text-left border-collapse relative min-w-[600px]">
+                <table className="w-full text-left border-collapse relative min-w-150">
                   <thead className="sticky top-0 z-20">
                     <tr className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md shadow-sm border-b border-slate-100 dark:border-slate-700">
                       <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Digital Snapshot</th>

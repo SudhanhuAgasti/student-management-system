@@ -26,9 +26,9 @@ const BroadcastBanner = () => {
     <motion.div 
       initial={{ y: -50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="relative mb-8 overflow-hidden rounded-[2rem] bg-linear-to-r from-rose-600 via-rose-500 to-pink-500 p-[1px] shadow-lg shadow-rose-500/20"
+      className="relative mb-8 overflow-hidden rounded-4xl bg-linear-to-r from-rose-600 via-rose-500 to-pink-500 p-px shadow-lg shadow-rose-500/20"
     >
-      <div className="bg-white/10 dark:bg-slate-900/40 backdrop-blur-xl rounded-[2rem] px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+      <div className="bg-white/10 dark:bg-slate-900/40 backdrop-blur-xl rounded-4xl px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
         <div className="flex items-center gap-4 flex-1 overflow-hidden">
           <div className="flex items-center gap-2 px-3 py-1 bg-white/20 dark:bg-white/10 rounded-full text-white border border-white/20 whitespace-nowrap">
             <AlertTriangle size={14} className="animate-pulse" />
