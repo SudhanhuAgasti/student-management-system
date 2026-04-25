@@ -5,7 +5,7 @@ import Sidebar from "./components/Sidebar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import TopNavbar from "./components/TopNavbar";
 
-// Lazy loading pages for better performance
+
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Students = lazy(() => import("./pages/Students"));
 const AddStudent = lazy(() => import("./pages/AddStudent"));
@@ -24,6 +24,8 @@ import PageTransition from "./components/PageTransition";
 import { AnimatePresence } from "framer-motion";
 import StudentTeacherFooter from "./components/StudentTeacherFooter";
 import AdminFooter from "./components/AdminFooter";
+import NetworkErrorPage from "./components/NetworkErrorPage";
+import { useEffect } from "react";
 
 // Simple Loading Component
 const LoadingFallback = () => (
@@ -37,6 +39,24 @@ function AppContent() {
   const location = useLocation();
   const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
+  if (isOffline) {
+    return <NetworkErrorPage />;
+  }
 
   return (
     <div className="flex bg-slate-50 dark:bg-[#020617] h-screen text-slate-800 dark:text-slate-100 font-sans antialiased overflow-hidden relative transition-colors duration-500">

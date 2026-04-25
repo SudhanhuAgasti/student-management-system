@@ -1,4 +1,5 @@
 # student-management-system
+
 ## 🚀 Technical Highlights
 
 ### 🤖 AI-Powered Attendance

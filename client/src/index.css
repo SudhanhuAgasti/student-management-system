@@ -1,16 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
-@variant dark (&:where(.dark, .dark *));
-
 @theme {
   --font-sans: "Inter", sans-serif;
 }
 
+@variant dark (&:where(.dark, .dark *));
+
 /* ============================================
    BASE STYLES
    ============================================ */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -32,16 +34,28 @@ html.dark body {
 }
 
 /* ============================================
-   SCROLLBAR STYLES
+   HIDE SCROLLBAR (GLOBAL)
    ============================================ */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-html.dark ::-webkit-scrollbar-thumb { background: #334155; }
-html.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
-.custom-scrollbar-hide::-webkit-scrollbar { display: none; }
-.custom-scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+* {
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+}
+
+*::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari and Opera */
+}
+
+.custom-scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.custom-scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
 /* ============================================
    GLASS EFFECTS
@@ -64,12 +78,15 @@ html.dark .glass-light {
 .card-indigo {
   background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
 }
+
 .card-emerald {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
 }
+
 .card-rose {
   background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
 }
+
 .card-amber {
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
 }
@@ -106,23 +123,47 @@ html.dark .glass-light {
    ANIMATIONS
    ============================================ */
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes scanLine {
-  0% { top: 0%; }
-  100% { top: 100%; }
+  0% {
+    top: 0%;
+  }
+
+  100% {
+    top: 100%;
+  }
 }
 
 @keyframes pulse-ring {
-  0% { transform: scale(0.9); opacity: 1; }
-  100% { transform: scale(1.4); opacity: 0; }
+  0% {
+    transform: scale(0.9);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
 }
 
 .animate-scan {
@@ -145,7 +186,9 @@ html.dark textarea {
 }
 
 html.dark input::placeholder,
-html.dark textarea::placeholder { color: #64748b !important; }
+html.dark textarea::placeholder {
+  color: #64748b !important;
+}
 
 html.dark input:focus,
 html.dark select:focus {
