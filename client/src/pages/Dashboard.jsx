@@ -243,7 +243,7 @@ function Dashboard() {
             Good {new Date().getHours() < 12 ? "Morning" : new Date().getHours() < 18 ? "Afternoon" : "Evening"},{" "}
             <span className="text-indigo-600 dark:text-indigo-400">
               {localStorage.getItem("userName") || "Admin"}
-            </span> 👋
+            </span>
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">
             Here's what's happening at your institute today.

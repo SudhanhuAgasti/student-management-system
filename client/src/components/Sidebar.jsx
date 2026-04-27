@@ -56,7 +56,7 @@ function Sidebar({ onCloseMobile }) {
 
 
   return (
-    <div className="h-dvh h-full w-72 bg-[#0f172a] text-slate-100 flex flex-col transition-all duration-300 shadow-2xl relative overflow-hidden">
+    <div className=" h-full h-dvh w-72 bg-[#0f172a] text-slate-100 flex flex-col transition-all duration-300 shadow-2xl relative overflow-hidden">
       {/* Decorative Blob */}
       <div className="absolute -top-12.5 -right-12.5 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
 

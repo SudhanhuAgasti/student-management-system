@@ -8,7 +8,7 @@ const NetworkErrorPage = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-50 dark:bg-[#020617] overflow-hidden p-6">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center bg-slate-50 dark:bg-[#020617] overflow-hidden p-6">
       {/* Dynamic Background Gradients */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-500/10 dark:bg-indigo-500/20 rounded-full blur-[120px] animate-pulse"></div>

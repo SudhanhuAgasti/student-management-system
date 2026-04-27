@@ -375,7 +375,7 @@ function Attendance() {
             </div>
             
             <div className="overflow-x-auto bg-slate-50 dark:bg-slate-900/50 custom-scrollbar-hide">
-              <div className="max-h-180 overflow-y-auto min-w-[600px]">
+              <div className="max-h-180 overflow-y-auto min-w-150">
                 <table className="w-full text-left border-collapse relative">
                   <thead className="sticky top-0 z-20">
                     <tr className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md shadow-sm border-b border-slate-100 dark:border-slate-700">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
-import { BookOpen, Clock, IndianRupee, Sparkles } from "lucide-react";
+import { BookOpen, Clock, IndianRupee } from "lucide-react";
 import { motion } from "framer-motion";
 
 const containerVariants = {
@@ -69,7 +69,7 @@ function Courses() {
           onClick={() => setShowAddModal(true)}
           className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-orange-500/20 transition-all flex items-center justify-center gap-2 w-full md:w-auto"
         >
-          <Sparkles size={20} /> Add New Course
+           Add New Course
         </button>
       </div>
 

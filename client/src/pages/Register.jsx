@@ -95,10 +95,10 @@ function Register() {
       <motion.div
         initial={{ opacity: 0, y: 40, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        className="relative z-10 w-full max-w-[1100px] h-[90vh] lg:h-[750px] flex flex-col lg:flex-row bg-white/5 backdrop-blur-2xl rounded-[3rem] border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] overflow-hidden"
+        className="relative z-10 w-full max-w-275 h-[90vh] lg:h-187.5 flex flex-col lg:flex-row bg-white/5 backdrop-blur-2xl rounded-[3rem] border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] overflow-hidden"
       >
         {/* LEFT PANEL: The Interactive Zone */}
-        <div className="w-full lg:w-[45%] h-[250px] lg:h-full border-b lg:border-b-0 lg:border-r border-white/10 relative shrink-0">
+        <div className="w-full lg:w-[45%] h-62.5 lg:h-full border-b lg:border-b-0 lg:border-r border-white/10 relative shrink-0">
           <div className="absolute top-4 left-4 sm:top-6 sm:left-6 lg:top-10 lg:left-10 z-20">
             <div className="flex items-center gap-2 mb-2 lg:mb-4">
               <div className="w-8 h-8 lg:w-10 lg:h-10 bg-indigo-500 rounded-xl flex items-center justify-center shadow-lg">
