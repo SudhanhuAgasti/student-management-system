@@ -85,11 +85,11 @@ function Students() {
         </div>
       </div>
 
-      <div className="glass border-0 bg-white/60 rounded-4xlshadow-xl shadow-slate-200/50 overflow-hidden backdrop-blur-xl p-2">
-        <div className="overflow-x-auto rounded-3xl bg-white/40 custom-scrollbar-hide">
+      <div className="glass border-0 bg-white/60 dark:bg-slate-900/40 rounded-4xl shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden backdrop-blur-xl p-2">
+        <div className="overflow-x-auto rounded-3xl bg-white/40 dark:bg-slate-800/40 custom-scrollbar-hide">
           <table className="w-full text-left border-collapse min-w-175">
             <thead>
-              <tr className="border-b border-slate-200/60 bg-white/50">
+              <tr className="border-b border-slate-200/60 dark:border-slate-700/60 bg-white/50 dark:bg-slate-800/50">
                 <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest">Student Name</th>
                 <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest">Phone Number</th>
                 <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest">Admission Key</th>
@@ -101,7 +101,7 @@ function Students() {
               variants={containerVariants}
               initial="hidden"
               animate="show"
-              className="divide-y divide-slate-100/50"
+              className="divide-y divide-slate-100/50 dark:divide-slate-800/50"
             >
               {loading ? (
                 <>
@@ -141,22 +141,22 @@ function Students() {
                       variants={rowVariants}
                       exit={{ opacity: 0, x: 20 }}
                       key={s._id} 
-                      className="hover:bg-white/80 transition-all duration-300 group"
+                      className="hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all duration-300 group"
                     >
                       <td className="px-8 py-5 whitespace-nowrap">
                         <div className="flex items-center gap-4">
-                          <div className="h-12 w-12 rounded-2xl bg-linear-to-br from-indigo-100 to-purple-100 text-indigo-600 flex items-center justify-center font-black text-lg shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all">
+                          <div className="h-12 w-12 rounded-2xl bg-linear-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/40 dark:to-purple-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-black text-lg shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all">
                             {s.name.charAt(0).toUpperCase()}
                           </div>
-                          <span className="font-bold text-slate-800 text-lg tracking-tight">{s.name}</span>
+                          <span className="font-bold text-slate-800 dark:text-white text-lg tracking-tight">{s.name}</span>
                         </div>
                       </td>
-                      <td className="px-8 py-5 whitespace-nowrap font-medium text-slate-500">{s.phone}</td>
+                      <td className="px-8 py-5 whitespace-nowrap font-medium text-slate-500 dark:text-slate-400">{s.phone}</td>
                       <td className="px-8 py-5 whitespace-nowrap font-black text-indigo-600 dark:text-indigo-400 font-mono tracking-widest">
                         {s.admissionKey || "N/A"}
                       </td>
                       <td className="px-8 py-5 whitespace-nowrap">
-                        <span className="inline-flex items-center px-4 py-1.5 rounded-xl text-sm font-bold bg-linear-to-r from-purple-100 to-pink-100 text-purple-800 shadow-sm border border-purple-200/50">
+                        <span className="inline-flex items-center px-4 py-1.5 rounded-xl text-sm font-bold bg-linear-to-r from-purple-100 to-pink-100 dark:from-purple-900/40 dark:to-pink-900/40 text-purple-800 dark:text-purple-300 shadow-sm border border-purple-200/50 dark:border-purple-800/50">
                           {s.course}
                         </span>
                       </td>
